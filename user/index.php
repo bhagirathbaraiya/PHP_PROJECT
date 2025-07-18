@@ -58,7 +58,7 @@ exit();
 						
 						<button class="btn btn-block btn-primary mb-4"  type="submit" name="submit">Signin</button>
 						<hr>
-						<p class="mb-2 text-muted">Forgot password? <a href="reset-password.php" class="f-w-400">Reset</a></p>
+						<p class="mb-2 text-muted">Forgot password ? <a href="reset-password.php" class="f-w-400">Reset</a></p>
 
 								<div class="registration">
 		                Don't have an account yet?<br/><br/>
