@@ -1,4 +1,84 @@
 <!-- [ Pre-loader ] End -->
+<style>
+:root {
+    --primary-white: #ffffff;
+    --light-gray: #eeeeee;
+    --medium-gray: #e5e5e5;
+    --gray: #e4e4e4;
+    --info-blue: #5bc0de;
+    --success-green: #a1be3b;
+    --teal: #51bbb7;
+    --green: #5cb85c;
+    --danger-light: #e8595980;
+    --danger: #e85959;
+    --dark-red: #d9534f;
+    --red: #d44c4c;
+    --dark-gray: #42454a;
+    --darker-gray: #292c31;
+    --darkest: #1c1f24;
+}
+
+/* Override sidebar colors with custom palette */
+.pcoded-navbar {
+    background: var(--darker-gray) !important;
+    color: var(--light-gray) !important;
+}
+
+.pcoded-navbar .header-logo {
+    background: var(--darkest) !important;
+}
+
+.pcoded-navbar .main-menu-header {
+    background: var(--dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.pcoded-navbar .main-menu-header .user-details > div,
+.pcoded-navbar .main-menu-header .user-details > span {
+    color: var(--light-gray) !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar li > a {
+    color: var(--light-gray) !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar li.active > a, 
+.pcoded-navbar .pcoded-inner-navbar li:focus > a, 
+.pcoded-navbar .pcoded-inner-navbar li:hover > a {
+    color: var(--teal) !important;
+    background: transparent !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar > li.active > a, 
+.pcoded-navbar .pcoded-inner-navbar > li.pcoded-trigger > a {
+    background: var(--teal) !important;
+    color: var(--primary-white) !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar > li.active:after,
+.pcoded-navbar .pcoded-inner-navbar > li.pcoded-trigger:after {
+    background: var(--teal) !important;
+}
+
+.pcoded-navbar .main-menu-header + div .list-group-item {
+    background: var(--dark-gray) !important;
+    color: var(--light-gray) !important;
+}
+
+.pcoded-navbar .main-menu-header + div .list-group-item:hover {
+    background: var(--teal) !important;
+    color: var(--primary-white) !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar li > a > .pcoded-micon {
+    color: var(--medium-gray) !important;
+}
+
+.pcoded-navbar .pcoded-inner-navbar li.active > a > .pcoded-micon,
+.pcoded-navbar .pcoded-inner-navbar li:hover > a > .pcoded-micon {
+    color: var(--primary-white) !important;
+}
+</style>
 <!-- [ navigation menu ] start -->
 <nav class="pcoded-navbar  ">
 	<div class="navbar-wrapper  ">
