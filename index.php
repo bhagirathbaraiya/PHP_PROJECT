@@ -51,7 +51,7 @@
                            <a class="nav-link" href="admin/index.php">Admin</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="user/index.php">User Login</a>
+                           <a class="nav-link" href="student/index.php">User Login</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" href="user/registration.php">User Regsitration</a>
