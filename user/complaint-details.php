@@ -18,6 +18,8 @@ $currentTime = date( 'd-m-Y h:i:s A', time () );
 
 <head>
     <title>CMS|| Complaint Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/user-responsive.css">
    
 
     <!-- vendor css -->

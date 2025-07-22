@@ -1,10 +1,13 @@
 
 	<!-- [ Pre-loader ] End -->
 	<!-- [ navigation menu ] start -->
-	<nav class="pcoded-navbar  ">
-		<div class="navbar-wrapper  ">
-			<div class="navbar-content scroll-div " >
-				
+	<nav class="pcoded-navbar">
+		<div class="navbar-wrapper">
+			<div class="navbar-content scroll-div">
+				<!-- Mobile Toggle Button -->
+				<button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle Sidebar">
+					<span class="sidebar-toggle-icon">&#9776;</span>
+				</button>
 				<div class="">
 					<div class="main-menu-header">
 						<?php
@@ -29,7 +32,7 @@ while($row=mysqli_fetch_array($query))
 					</div>
 				</div>
 				
-				<ul class="nav pcoded-inner-navbar ">
+				<ul class="nav pcoded-inner-navbar">
 					<li class="nav-item pcoded-menu-caption">
 						<label>User Side</label>
 					</li>
@@ -51,3 +54,30 @@ while($row=mysqli_fetch_array($query))
 			</div>
 		</div>
 	</nav>
+	<!-- Responsive Sidebar Script -->
+	<script>
+	(function() {
+	  function toggleSidebar() {
+		var sidebar = document.querySelector('.pcoded-navbar');
+		if (sidebar) {
+		  sidebar.classList.toggle('sidebar-collapsed');
+		}
+	  }
+	  // Vanilla JS
+	  document.addEventListener('DOMContentLoaded', function() {
+		var toggleBtn = document.getElementById('sidebarToggle');
+		if (toggleBtn) {
+		  toggleBtn.addEventListener('click', toggleSidebar);
+		} else {
+		  // Button not found, check your HTML structure
+		  console.warn('Sidebar toggle button not found.');
+		}
+	  });
+	  // jQuery fallback if available
+	  if (window.jQuery) {
+		$(function() {
+		  $('#sidebarToggle').on('click', toggleSidebar);
+		});
+	  }
+	})();
+	</script>

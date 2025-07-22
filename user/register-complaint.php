@@ -58,6 +58,8 @@ echo '<script> alert("Your complain has been successfully filled and your compla
 
 <head>
     <title>CMS||Register Complaint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/user-responsive.css">
    
 
     <!-- vendor css -->

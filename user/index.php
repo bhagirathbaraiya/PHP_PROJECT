@@ -32,6 +32,8 @@ exit();
 <head>
 	<title>CMS | User login</title>
 	<link rel="stylesheet" href="../admin/assets/css/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/user-responsive.css">
 	
 </head>
 

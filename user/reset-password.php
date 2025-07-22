@@ -28,6 +28,8 @@ echo "<script>alert('Email id or Mobile no is invalid');</script>";
 <head>
 	<title>CMS | User Password Recovery</title>
 	<link rel="stylesheet" href="../admin/assets/css/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/user-responsive.css">
 	<script type="text/javascript">
 function valid()
 {

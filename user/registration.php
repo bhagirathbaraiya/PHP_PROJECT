@@ -20,6 +20,8 @@ if(isset($_POST['submit']))
 <head>
 	<title>CMS | User Regsitrations</title>
 	<link rel="stylesheet" href="../admin/assets/css/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/user-responsive.css">
 	<script>
 function userAvailability() {
 $("#loaderIcon").show();
