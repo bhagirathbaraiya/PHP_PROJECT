@@ -18,30 +18,45 @@ else{
     <link rel="stylesheet" href="assets/css/user-responsive.css">
     <style>
         body {
-            background: #f7f9fb;
+            background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%);
             color: #102d4a;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
         .dashboard-container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 40px auto 0 auto;
             padding: 0 16px 32px 16px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
         }
         .stat-box {
-            background: #fff;
-            border-radius: 14px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 18px;
             padding: 24px 20px;
-            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            box-shadow: none;
-            border: none;
-            transition: box-shadow 0.2s;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(12px);
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+        .stat-box:focus, .stat-box:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            transform: translateY(-2px) scale(1.03);
+            outline: 2px solid #0097A7;
         }
         .stat-box .stat-icon {
             color: #0097A7;
-            background: #f2f7fa;
+            background: rgba(242,247,250,0.7);
             border-radius: 50%;
             width: 56px;
             height: 56px;
@@ -50,6 +65,7 @@ else{
             justify-content: center;
             font-size: 2rem;
             margin-right: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
         }
         .stat-title {
             color: #222;
@@ -65,48 +81,79 @@ else{
             display: flex;
             flex-direction: column;
         }
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-left: -12px;
-            margin-right: -12px;
-        }
-        .col-md-6, .col-xl-3, .col-md-12 {
-            padding-left: 12px;
-            padding-right: 12px;
-        }
-        .col-md-6 {
-            width: 50%;
-        }
-        .col-xl-3 {
-            width: 25%;
-        }
-        .col-md-12 {
-            width: 100%;
-        }
-        @media (max-width: 991px) {
-            .col-xl-3 {
-                width: 50%;
-            }
-        }
-        @media (max-width: 767px) {
-            .col-md-6, .col-xl-3, .col-md-12 {
-                width: 100%;
-            }
-            .dashboard-container {
-                margin-top: 16px;
-            }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
         }
         .chart-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 20px 16px;
-            margin-bottom: 24px;
-            box-shadow: none;
-            border: none;
+            background: rgba(255,255,255,0.18);
+            border-radius: 18px;
+            padding: 16px 8px 24px 8px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(12px);
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .chart-card:focus, .chart-card:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            transform: translateY(-2px) scale(1.02);
+            outline: 2px solid #0097A7;
         }
         .stat-title.mb-3 {
             margin-bottom: 12px;
+        }
+        .chart-container {
+            min-height: 160px;
+            max-width: 340px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.22);
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 8px 0;
+        }
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            display: flex;
+            gap: 8px;
+        }
+        .breadcrumb-item a, .breadcrumb-item {
+            color: #0097A7;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .breadcrumb-item.active {
+            color: #A41E22;
+        }
+        @media (max-width: 991px) {
+            .dashboard-container {
+                gap: 20px;
+            }
+            .chart-card {
+                max-width: 100%;
+            }
+            .chart-container {
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 767px) {
+            .dashboard-container {
+                margin-top: 16px;
+            }
+            .stat-grid, .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Accessibility: Focus outline for keyboard navigation */
+        :focus {
+            outline: 2px solid #0097A7 !important;
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -115,7 +162,7 @@ else{
     <?php include('include/header.php');?>
     <!-- [ Header ] end -->
     <div class="dashboard-container">
-        <div class="page-header" style="margin-bottom: 24px;">
+        <div class="page-header" style="margin-bottom: 0;">
             <div class="page-block">
                 <div class="row align-items-center">
                     <div class="col-md-12">
@@ -123,110 +170,87 @@ else{
                             <h5 class="m-b-10">Dashboard Analytics</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">Dashboard Analytics</a></li>
+                            <li class="breadcrumb-item"><a href="dashboard.php" aria-label="Home"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Dashboard Analytics</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <!-- Stat Boxes -->
+        <div class="stat-grid" role="region" aria-label="Statistics Overview">
             <!-- Assignments Stat Boxes -->
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Total Assignments</div>
-                        <div class="stat-value">12</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Total Assignments: 12">
+                <div class="stat-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Total Assignments</div>
+                    <div class="stat-value">12</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Pending Assignments</div>
-                        <div class="stat-value">3</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Pending Assignments: 3">
+                <div class="stat-icon"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Pending Assignments</div>
+                    <div class="stat-value">3</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Submitted Assignments</div>
-                        <div class="stat-value">8</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Submitted Assignments: 8">
+                <div class="stat-icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Submitted Assignments</div>
+                    <div class="stat-value">8</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Overdue Assignments</div>
-                        <div class="stat-value">1</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Overdue Assignments: 1">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Overdue Assignments</div>
+                    <div class="stat-value">1</div>
                 </div>
             </div>
             <!-- Notebook Stat Boxes -->
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-book"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Total Notebooks</div>
-                        <div class="stat-value">10</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Total Notebooks: 10">
+                <div class="stat-icon"><i class="fas fa-book" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Total Notebooks</div>
+                    <div class="stat-value">10</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Pending Notebooks</div>
-                        <div class="stat-value">2</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Pending Notebooks: 2">
+                <div class="stat-icon"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Pending Notebooks</div>
+                    <div class="stat-value">2</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Submitted Notebooks</div>
-                        <div class="stat-value">7</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Submitted Notebooks: 7">
+                <div class="stat-icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Submitted Notebooks</div>
+                    <div class="stat-value">7</div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="stat-info">
-                        <div class="stat-title">Overdue Notebooks</div>
-                        <div class="stat-value">1</div>
-                    </div>
+            <div class="stat-box" tabindex="0" aria-label="Overdue Notebooks: 1">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                <div class="stat-info">
+                    <div class="stat-title">Overdue Notebooks</div>
+                    <div class="stat-value">1</div>
                 </div>
             </div>
         </div>
         <!-- Graphs Row -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h5 class="stat-title mb-3">Assignments Overview</h5>
-                    <div id="assignmentPieChart" style="min-height: 220px;"></div>
-                </div>
+        <div class="charts-grid" role="region" aria-label="Charts Overview">
+            <div class="chart-card" tabindex="0" aria-label="Assignments Overview Pie Chart">
+                <h5 class="stat-title mb-3">Assignments Overview</h5>
+                <div id="assignmentPieChart" class="chart-container" aria-label="Assignments Pie Chart"></div>
             </div>
-            <div class="col-md-6">
-                <div class="chart-card">
-                    <h5 class="stat-title mb-3">Notebooks Overview</h5>
-                    <div id="notebookPieChart" style="min-height: 220px;"></div>
-                </div>
+            <div class="chart-card" tabindex="0" aria-label="Notebooks Overview Pie Chart">
+                <h5 class="stat-title mb-3">Notebooks Overview</h5>
+                <div id="notebookPieChart" class="chart-container" aria-label="Notebooks Pie Chart"></div>
             </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="chart-card">
-                    <h5 class="stat-title mb-3">Submission Comparison</h5>
-                    <div id="submissionBarChart" style="min-height: 220px;"></div>
-                </div>
+            <div class="chart-card" tabindex="0" aria-label="Submission Comparison Bar Chart">
+                <h5 class="stat-title mb-3">Submission Comparison</h5>
+                <div id="submissionBarChart" class="chart-container" aria-label="Submission Bar Chart"></div>
             </div>
         </div>
     </div>
@@ -247,27 +271,59 @@ else{
         submitted: 7,
         overdue: 1
     };
+    // Dummy data for progress line chart
+    var progressData = {
+        categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        assignments: [2, 4, 8, 12],
+        notebooks: [1, 3, 6, 10]
+    };
     // Pie Chart for Assignments
     var assignmentPieOptions = {
-        chart: { type: 'pie' },
+        chart: { type: 'pie', height: 180 },
         series: [assignmentData.pending, assignmentData.submitted, assignmentData.overdue],
         labels: ['Pending', 'Submitted', 'Overdue'],
-        colors: ['#F9B600', '#0097A7', '#A41E22']
+        colors: ['#F9B600', '#0097A7', '#A41E22'],
+        legend: {
+            show: true,
+            fontSize: '15px',
+            position: 'bottom',
+            labels: { colors: ['#222'] }
+        },
+        dataLabels: {
+            style: { fontSize: '15px', fontWeight: 'bold' }
+        },
+        accessibility: {
+            enabled: true,
+            description: 'Pie chart showing assignment status breakdown.'
+        }
     };
     var assignmentPieChart = new ApexCharts(document.querySelector("#assignmentPieChart"), assignmentPieOptions);
     assignmentPieChart.render();
     // Pie Chart for Notebooks
     var notebookPieOptions = {
-        chart: { type: 'pie' },
+        chart: { type: 'pie', height: 180 },
         series: [notebookData.pending, notebookData.submitted, notebookData.overdue],
         labels: ['Pending', 'Submitted', 'Overdue'],
-        colors: ['#F9B600', '#0097A7', '#A41E22']
+        colors: ['#F9B600', '#0097A7', '#A41E22'],
+        legend: {
+            show: true,
+            fontSize: '15px',
+            position: 'bottom',
+            labels: { colors: ['#222'] }
+        },
+        dataLabels: {
+            style: { fontSize: '15px', fontWeight: 'bold' }
+        },
+        accessibility: {
+            enabled: true,
+            description: 'Pie chart showing notebook status breakdown.'
+        }
     };
     var notebookPieChart = new ApexCharts(document.querySelector("#notebookPieChart"), notebookPieOptions);
     notebookPieChart.render();
     // Bar Chart for Submission Comparison
     var submissionBarOptions = {
-        chart: { type: 'bar' },
+        chart: { type: 'bar', height: 200 },
         series: [
             {
                 name: 'Assignments',
@@ -279,12 +335,27 @@ else{
             }
         ],
         xaxis: {
-            categories: ['Total', 'Pending', 'Submitted', 'Overdue']
+            categories: ['Total', 'Pending', 'Submitted', 'Overdue'],
+            labels: { style: { fontSize: '15px', colors: ['#102d4a'] } }
         },
-        colors: ['#0097A7', '#F9B600']
+        legend: {
+            show: true,
+            fontSize: '15px',
+            position: 'bottom',
+            labels: { colors: ['#222'] }
+        },
+        dataLabels: {
+            style: { fontSize: '15px', fontWeight: 'bold' }
+        },
+        colors: ['#0097A7', '#F9B600'],
+        accessibility: {
+            enabled: true,
+            description: 'Bar chart comparing assignment and notebook submissions.'
+        }
     };
     var submissionBarChart = new ApexCharts(document.querySelector("#submissionBarChart"), submissionBarOptions);
     submissionBarChart.render();
+    
 </script>
 </body>
 
