@@ -14,8 +14,113 @@ else{
 <head>
     <title>Assignment Management System || Dashboard</title>
     <link rel="stylesheet" href="../admin/assets/css/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="assets/css/user-responsive.css">
+    <style>
+        body {
+            background: #ffffff;
+            color: #102d4a;
+        }
+        .glass {
+            background: rgba(255,255,255,0.5);
+            box-shadow: 0 8px 32px 0 #00000033;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1.5px solid #F9B600;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+        }
+        .modern-card {
+            border-radius: 20px;
+            box-shadow: 0 4px 24px 0 #00000033;
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            min-height: 120px;
+        }
+        .modern-card .card-body {
+            font-size: 2.5rem;
+            color: #00a6be;
+            background: #eaeaea;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+        .modern-card.bg-danger .card-body {
+            color: #cd201f;
+            background: #f9b600;
+        }
+        .modern-card.bg-warning .card-body {
+            color: #f8a115;
+            background: #eaeaea;
+        }
+        .modern-card.widget-purple-card .card-body {
+            color: #b91ea6;
+            background: #eaeaea;
+        }
+        .modern-card .card-info h4 {
+            margin: 0;
+            font-size: 2rem;
+            color: #102d4a;
+        }
+        .modern-card .card-info h6 {
+            margin: 0;
+            color: #757575;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        /* Glassmorphism for chart containers */
+        #complaintPieChart, #complaintBarChart {
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 #00000033;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #eaeaea;
+            padding: 16px;
+        }
+        /* Responsive tweaks */
+        @media (max-width: 767px) {
+            .modern-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px 10px;
+            }
+            .modern-card .card-body {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+        .stat-icon {
+            color: #0097A7;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #0097A7;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-right: 20px;
+        }
+        .stat-title {
+            color: #000000;
+            font-weight: 600;
+        }
+        .stat-value {
+            color: #A41E22;
+            font-size: 2rem;
+        }
+    </style>
 </head>
 <body class="">
 	<!-- [ Pre-loader ] start -->
@@ -49,101 +154,104 @@ else{
         <!-- [ breadcrumb ] end -->
         <!-- [ Main Content ] start -->
         <div class="row">
+            <!-- Assignments Stat Boxes -->
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div>
+                        <div class="stat-title">Total Assignments</div>
+                        <div class="stat-value">12</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div>
+                        <div class="stat-title">Pending Assignments</div>
+                        <div class="stat-value">3</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <div class="stat-title">Submitted Assignments</div>
+                        <div class="stat-value">8</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div>
+                        <div class="stat-title">Overdue Assignments</div>
+                        <div class="stat-value">1</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Notebook Stat Boxes -->
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-book"></i></div>
+                    <div>
+                        <div class="stat-title">Total Notebooks</div>
+                        <div class="stat-value">10</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div>
+                        <div class="stat-title">Pending Notebooks</div>
+                        <div class="stat-value">2</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <div class="stat-title">Submitted Notebooks</div>
+                        <div class="stat-value">7</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="glass d-flex align-items-center">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div>
+                        <div class="stat-title">Overdue Notebooks</div>
+                        <div class="stat-value">1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Graphs Row -->
+        <div class="row mt-4">
             <div class="col-md-6">
-                <div id="complaintPieChart" style="min-height: 300px;"></div>
+                <div class="glass" style="min-height: 320px;">
+                    <h5 class="stat-title mb-3">Assignments Overview</h5>
+                    <div id="assignmentPieChart" style="min-height: 220px;"></div>
+                </div>
             </div>
             <div class="col-md-6">
-                <div id="complaintBarChart" style="min-height: 300px;"></div>
-            </div>
-           
-        
-              <div class="col-md-12 col-xl-6">
-                
-                <!-- widget-success-card start -->
-                <div class="card flat-card widget-primary-card">
-                    <div class="row-table">
-                        <div class="col-sm-4 card-body">
-                            <i class="fas fa-file"></i>
-                        </div>
-                        <div class="col-sm-9">
-                           <?php 
-$uid=$_SESSION['id'];
-$query5=mysqli_query($con,"select complaintNumber from tblcomplaints where userId='$uid'");
-$totcom=mysqli_num_rows($query5);
-?>
-                            <h4><?php echo $totcom;?></h4>
-                            <h6>Total Assignments</h6>
-                        </div>
-                    </div>
+                <div class="glass" style="min-height: 320px;">
+                    <h5 class="stat-title mb-3">Notebooks Overview</h5>
+                    <div id="notebookPieChart" style="min-height: 220px;"></div>
                 </div>
-                <!-- widget-success-card end -->
             </div>
-              <div class="col-md-12 col-xl-6">
-                
-                <!-- widget-success-card start -->
-                <div class="card flat-card bg-danger">
-                    <div class="row-table">
-                        <div class="col-sm-4 card-body">
-                            <i class="fas fa-file"></i>
-                        </div>
-                        <div class="col-sm-9">
-<?php 
-$query5=mysqli_query($con,"select complaintNumber from tblcomplaints where userId='$uid' and status is null");
-$newcom=mysqli_num_rows($query5);
-?>
-                            <h4><?php echo $newcom;?></h4>
-                            <h6>Pending Assignments</h6>
-                        </div>
-                    </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="glass" style="min-height: 320px;">
+                    <h5 class="stat-title mb-3">Submission Comparison</h5>
+                    <div id="submissionBarChart" style="min-height: 220px;"></div>
                 </div>
-                <!-- widget-success-card end -->
             </div>
-              <div class="col-md-12 col-xl-6">
-                
-                <!-- widget-success-card start -->
-                <div class="card flat-card bg-warning">
-                    <div class="row-table">
-                        <div class="col-sm-3 card-body">
-                            <i class="fas fa-file"></i>
-                        </div>
-                        <div class="col-sm-9">
-<?php 
-$query5=mysqli_query($con,"select complaintNumber from tblcomplaints where userId='$uid' and status='in process'");
-$inprocesscom=mysqli_num_rows($query5);
-?>
-                            <h4><?php echo $inprocesscom;?></h4>
-                            <h6>Inprocess Assignments</h6>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- widget-success-card end -->
-            </div>
-              <div class="col-md-12 col-xl-6">
-                
-                <!-- widget-success-card start -->
-                <div class="card flat-card widget-purple-card">
-                    <div class="row-table">
-                        <div class="col-sm-3 card-body">
-                            <i class="fas fa-file"></i>
-                        </div>
-                        <div class="col-sm-9">
-<?php 
-$query5=mysqli_query($con,"select complaintNumber from tblcomplaints where userId='$uid' and status='closed'");
-$closedcom=mysqli_num_rows($query5);
-?>
-                            <h4><?php echo $closedcom;?></h4>
-                            <h6>Closed Assignments</h6>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- widget-success-card end -->
-            </div>
-     
-            </div>
-        
-        
+        </div>
             <!-- Latest Customers end -->
         </div>
         <!-- [ Main Content ] end -->
@@ -153,38 +261,57 @@ $closedcom=mysqli_num_rows($query5);
     <script src="../admin/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../admin/assets/js/plugins/apexcharts.min.js"></script>
 <script>
-    var total = <?php echo $totcom; ?>;
-    var pending = <?php echo $newcom; ?>;
-    var inprocess = <?php echo $inprocesscom; ?>;
-    var closed = <?php echo $closedcom; ?>;
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Pie Chart
-    var pieOptions = {
+    // Dummy data for graphs
+    var assignmentData = {
+        total: 12,
+        pending: 3,
+        submitted: 8,
+        overdue: 1
+    };
+    var notebookData = {
+        total: 10,
+        pending: 2,
+        submitted: 7,
+        overdue: 1
+    };
+    // Pie Chart for Assignments
+    var assignmentPieOptions = {
         chart: { type: 'pie' },
-        series: [pending, inprocess, closed],
-        labels: ['Pending', 'In Process', 'Closed'],
-        colors: ['#dc3545', '#ffc107', '#6f42c1']
+        series: [assignmentData.pending, assignmentData.submitted, assignmentData.overdue],
+        labels: ['Pending', 'Submitted', 'Overdue'],
+        colors: ['#F9B600', '#0097A7', '#A41E22']
     };
-    var pieChart = new ApexCharts(document.querySelector("#complaintPieChart"), pieOptions);
-    pieChart.render();
-
-    // Bar Chart
-    var barOptions = {
+    var assignmentPieChart = new ApexCharts(document.querySelector("#assignmentPieChart"), assignmentPieOptions);
+    assignmentPieChart.render();
+    // Pie Chart for Notebooks
+    var notebookPieOptions = {
+        chart: { type: 'pie' },
+        series: [notebookData.pending, notebookData.submitted, notebookData.overdue],
+        labels: ['Pending', 'Submitted', 'Overdue'],
+        colors: ['#F9B600', '#0097A7', '#A41E22']
+    };
+    var notebookPieChart = new ApexCharts(document.querySelector("#notebookPieChart"), notebookPieOptions);
+    notebookPieChart.render();
+    // Bar Chart for Submission Comparison
+    var submissionBarOptions = {
         chart: { type: 'bar' },
-        series: [{
-            name: 'Complaints',
-            data: [total, pending, inprocess, closed]
-        }],
+        series: [
+            {
+                name: 'Assignments',
+                data: [assignmentData.total, assignmentData.pending, assignmentData.submitted, assignmentData.overdue]
+            },
+            {
+                name: 'Notebooks',
+                data: [notebookData.total, notebookData.pending, notebookData.submitted, notebookData.overdue]
+            }
+        ],
         xaxis: {
-            categories: ['Total', 'Pending', 'In Process', 'Closed']
+            categories: ['Total', 'Pending', 'Submitted', 'Overdue']
         },
-        colors: ['#007bff']
+        colors: ['#0097A7', '#F9B600']
     };
-    var barChart = new ApexCharts(document.querySelector("#complaintBarChart"), barOptions);
-    barChart.render();
-});
+    var submissionBarChart = new ApexCharts(document.querySelector("#submissionBarChart"), submissionBarOptions);
+    submissionBarChart.render();
 </script>
 </body>
 
