@@ -20,7 +20,7 @@ else{
         body {
             background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%);
             color: #102d4a;
-            margin: 0;
+            margin-top: 70px;
             padding: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
         }
