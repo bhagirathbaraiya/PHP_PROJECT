@@ -1,12 +1,13 @@
 <header class="navbar pcoded-header navbar-expand-lg navbar-light header-dark user-glass-header" style="backdrop-filter: blur(16px); background: rgba(255,255,255,0.18); border-bottom: 1.5px solid rgba(255,255,255,0.35); box-shadow: 0 4px 24px rgba(0,0,0,0.10);">
     <div class="m-header">
-        <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
-        <a href="dashboard.php" class="b-brand">
-            <strong style="color:#0097A7; letter-spacing:1px; font-size:1.3rem;">Assignment Tracker</strong>
+        <a href="dashboard.php" class="b-brand d-flex align-items-center" style="gap:10px;">
+            <img src="../public/LOGO_B.png" alt="Logo Big" class="logo-big" style="height:48px; width:auto; display:inline-block;">
+            <img src="../public/LOGO_S.png" alt="Logo Small" class="logo-small" style="height:36px; width:auto; display:none;">
+            <!-- <strong style="color:#0097A7; letter-spacing:1px; font-size:1.3rem;">Assignment Tracker</strong> -->
         </a>
-        <a href="#!" class="mob-toggler">
+        <!-- <a href="#!" class="mob-toggler">
             <i class="feather icon-more-vertical"></i>
-        </a>
+        </a> -->
     </div>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
@@ -41,15 +42,36 @@ echo $name;
     </div>
 </header>
 <style>
+.logo-big {
+    height: 48px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+.logo-small {
+    height: 36px;
+    width: auto;
+    display: none;
+    vertical-align: middle;
+}
+.m-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+.b-brand {
+    margin-right: auto !important;
+}
 @media (max-width: 991px) {
-    .user-glass-header {
-        flex-direction: column;
-        padding: 8px 0 0 0;
+    .logo-big {
+        display: none !important;
     }
-    .user-glass-header .navbar-nav {
-        flex-direction: row;
-        justify-content: flex-end;
-        width: 100%;
+    .logo-small {
+        display: inline-block !important;
+    }
+    .user-glass-header .b-brand strong {
+        font-size: 1rem;
     }
     .user-glass-header .dropdown-toggle span {
         display: none !important;
@@ -59,8 +81,8 @@ echo $name;
     }
 }
 @media (max-width: 600px) {
-    .user-glass-header .b-brand strong {
-        font-size: 1rem;
+    .logo-small {
+        height: 28px !important;
     }
     .user-glass-header .dropdown-toggle img {
         width: 32px !important;
