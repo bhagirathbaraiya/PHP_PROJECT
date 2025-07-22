@@ -22,7 +22,7 @@
 								</a>
 								<div class="dropdown-menu dropdown-menu-right profile-notification">
 									<div class="pro-head">
-										<img src="../admin/assets/images/user/user.png" class="img-radius" alt="User-Profile-Image">
+										<img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image">
 										<?php
 
 $ret=mysqli_query($con,"select fullname from users");
