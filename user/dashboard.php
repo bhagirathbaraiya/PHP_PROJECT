@@ -179,6 +179,10 @@ else{
         </div>
         <!-- Stat Boxes -->
         <div class="stat-grid" role="region" aria-label="Statistics Overview">
+            <!-- Assignments Header -->
+            <div style="grid-column: 1 / -1; text-align:left; margin-bottom: 4px; margin-top: 0;">
+                <h4 style="margin:0; color:#0097A7; font-weight:700; letter-spacing:1px;">Assignments</h4>
+            </div>
             <!-- Assignments Stat Boxes -->
             <div class="stat-box" tabindex="0" aria-label="Total Assignments: 12">
                 <div class="stat-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
@@ -207,6 +211,10 @@ else{
                     <div class="stat-title">Overdue Assignments</div>
                     <div class="stat-value">1</div>
                 </div>
+            </div>
+            <!-- Notebooks Header -->
+            <div style="grid-column: 1 / -1; text-align:left; margin-top: 18px; margin-bottom: 4px;">
+                <h4 style="margin:0; color:#A41E22; font-weight:700; letter-spacing:1px;">Notebooks</h4>
             </div>
             <!-- Notebook Stat Boxes -->
             <div class="stat-box" tabindex="0" aria-label="Total Notebooks: 10">
