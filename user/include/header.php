@@ -5,24 +5,28 @@
             <img src="../public/LOGO_S.png" alt="Logo Small" class="logo-small" style="height:36px; width:auto; display:none;">
             <!-- <strong style="color:#0097A7; letter-spacing:1px; font-size:1.3rem;">Assignment Tracker</strong> -->
         </a>
-        <a href="#!" class="mob-toggler">
+        <a href="profile.php" class="mob-toggler">
             <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:50px; height:50px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
         </a>
     </div>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
             <li>
-                <div class="dropdown drp-user">
-                    <a href="#" class="dropdown-toggle d-flex align-items-center" data-toggle="dropdown" style="gap:10px; min-width:120px;">
-                        <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:40px; height:40px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
+                <div class="dropdown drp-user d-flex">
+                    <a href="profile.php" class="dropdown-toggle d-flex align-items-center"  style="gap:10px; min-width:120px;">
+                    <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:40px; height:40px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
                         <span style="color:#102d4a; font-weight:600; font-size:1rem;">
                             <?php
                             $ret = mysqli_query($con, "select fullname from users where id='" . $_SESSION['id'] . "'");
                             $row = mysqli_fetch_array($ret);
                             $name = $row['fullname'];
                             echo $name;
-                            ?> </span>
+                            ?></span><br>
+                            <a href="logout.php" class="dud-logout" title="Logout" style="color:#A41E22;">
+                                <i class="feather icon-log-out"> </i>
+                            </a>
                     </a>
+                    
                     <div class="dropdown-menu dropdown-menu-right profile-notification glass-dropdown" style="backdrop-filter: blur(12px); background: rgba(255,255,255,0.85); border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.10); border:1.5px solid rgba(255,255,255,0.35); min-width:220px;">
                         <div class="pro-head d-flex align-items-center" style="gap:10px; padding:16px 16px 12px 16px; border-bottom:1px solid #e0e7ef;">
                             <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
@@ -32,9 +36,9 @@
                             </a>
                         </div>
                         <ul class="pro-body" style="padding:10px 0 0 0;">
-                            <li><a href="profile.php" class="dropdown-item d-flex align-items-center" style="gap:8px;"><i class="feather icon-user"></i> Profile</a></li>
-                            <li><a href="setting.php" class="dropdown-item d-flex align-items-center" style="gap:8px;"><i class="feather icon-mail"></i> Settings</a></li>
-                            <li><a href="logout.php" class="dropdown-item d-flex align-items-center" style="gap:8px;"><i class="feather icon-lock"></i> Logout</a></li>
+                            <li></li>
+                            
+                            
                         </ul>
                     </div>
                 </div>
