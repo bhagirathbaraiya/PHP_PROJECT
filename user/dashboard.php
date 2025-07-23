@@ -163,7 +163,7 @@ else{
     <!-- [ Header ] end -->
     <div class="dashboard-container">
         <div class="page-header" style="margin-bottom: 0;">
-            <div class="page-block">
+            <!-- <div class="page-block">
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
@@ -175,7 +175,7 @@ else{
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Stat Boxes -->
         <div class="stat-grid" role="region" aria-label="Statistics Overview">
