@@ -264,8 +264,11 @@ else{
     </div>
     <!-- Your Subjects Section -->
     <div class="dashboard-container" style="margin-top: 0;">
-        <div style="grid-column: 1 / -1; text-align:left; margin-bottom: 8px; margin-top: 0;">
+        <div style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; margin-top: 0;">
             <h4 style="margin:0; color:#102d4a; font-weight:700; letter-spacing:1px;">Your Subjects</h4>
+            <button id="toggle-all-graphs-btn" class="toggle-all-graphs-btn" aria-label="Toggle All Graphs" title="Toggle All Graphs">
+                <i class="fas fa-chart-pie"></i> <span id="toggle-all-graphs-label">Show All Graphs</span>
+            </button>
         </div>
         <div class="subjects-grid" role="region" aria-label="Subjects Overview">
             <!-- Subject cards will be injected here by JS -->
@@ -407,7 +410,7 @@ else{
 
     // Render subject cards
     var subjectsGrid = document.querySelector('.subjects-grid');
-    subjects.forEach(function(subject) {
+    subjects.forEach(function(subject, idx) {
         var card = document.createElement('div');
         card.className = 'subject-card';
         card.tabIndex = 0;
@@ -417,7 +420,7 @@ else{
             <div class="faculty-name">Faculty: ${subject.faculty}</div>
             <div class="subject-section assignment-section">
                 <div class="section-label"><i class='fas fa-file-alt'></i> Assignments</div>
-                <div class="subject-stats">
+                <div class="subject-stats stats-view" id="assignment-stats-${idx}">
                     <div class="subject-stat total">
                         <span class="stat-label">Total</span>
                         <span class="stat-value">${subject.assignments.total}</span>
@@ -435,10 +438,11 @@ else{
                         <span class="stat-value">${subject.assignments.due}</span>
                     </div>
                 </div>
+                <div class="chart-view" id="assignment-chart-${idx}" style="display:none; min-width:180px; min-height:120px;"></div>
             </div>
             <div class="subject-section notebook-section">
                 <div class="section-label"><i class='fas fa-book'></i> Notebooks</div>
-                <div class="subject-stats">
+                <div class="subject-stats stats-view" id="notebook-stats-${idx}">
                     <div class="subject-stat total">
                         <span class="stat-label">Total</span>
                         <span class="stat-value">${subject.notebooks.total}</span>
@@ -456,9 +460,65 @@ else{
                         <span class="stat-value">${subject.notebooks.due}</span>
                     </div>
                 </div>
+                <div class="chart-view" id="notebook-chart-${idx}" style="display:none; min-width:180px; min-height:120px;"></div>
             </div>
         `;
         subjectsGrid.appendChild(card);
+    });
+
+    // Toggle all charts/stat views logic
+    var chartInstances = {};
+    var allGraphsVisible = false;
+    function renderPieChartIfNeeded(idx, type) {
+        var chartId = type + '-chart-' + idx;
+        var chartDiv = document.getElementById(chartId);
+        if (!chartInstances[chartId]) {
+            var data = type === 'assignment' ? subjects[idx].assignments : subjects[idx].notebooks;
+            var chartOptions = {
+                chart: { type: 'pie', height: 140 },
+                series: [data.completed, data.pending, data.due],
+                labels: ['Completed', 'Pending', 'Due'],
+                colors: ['#0097A7', '#F9B600', '#A41E22'],
+                legend: {
+                    show: true,
+                    fontSize: '13px',
+                    position: 'bottom',
+                    labels: { colors: ['#222'] }
+                },
+                dataLabels: {
+                    style: { fontSize: '13px', fontWeight: 'bold' }
+                },
+                accessibility: {
+                    enabled: true,
+                    description: (type.charAt(0).toUpperCase() + type.slice(1)) + ' pie chart for ' + subjects[idx].name
+                }
+            };
+            chartInstances[chartId] = new ApexCharts(chartDiv, chartOptions);
+            chartInstances[chartId].render();
+        }
+    }
+    function toggleAllGraphs(showGraphs) {
+        subjects.forEach(function(subject, idx) {
+            ['assignment', 'notebook'].forEach(function(type) {
+                var statsId = type + '-stats-' + idx;
+                var chartId = type + '-chart-' + idx;
+                var statsDiv = document.getElementById(statsId);
+                var chartDiv = document.getElementById(chartId);
+                if (showGraphs) {
+                    statsDiv.style.display = 'none';
+                    chartDiv.style.display = 'block';
+                    renderPieChartIfNeeded(idx, type);
+                } else {
+                    statsDiv.style.display = 'flex';
+                    chartDiv.style.display = 'none';
+                }
+            });
+        });
+        allGraphsVisible = showGraphs;
+        document.getElementById('toggle-all-graphs-label').textContent = showGraphs ? 'Show All Stats' : 'Show All Graphs';
+    }
+    document.getElementById('toggle-all-graphs-btn').addEventListener('click', function() {
+        toggleAllGraphs(!allGraphsVisible);
     });
 </script>
 <style>
@@ -576,6 +636,40 @@ else{
     .subjects-grid {
         grid-template-columns: 1fr;
     }
+}
+.toggle-all-graphs-btn {
+    background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(0,151,167,0.18);
+    border-radius: 18px;
+    cursor: pointer;
+    padding: 6px 16px 6px 12px;
+    font-size: 1.08rem;
+    color: #0097A7;
+    transition: background 0.15s, box-shadow 0.15s;
+    outline: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+}
+.toggle-all-graphs-btn:focus, .toggle-all-graphs-btn:hover {
+    background: #e0f7fa;
+    color: #A41E22;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.toggle-all-graphs-btn i {
+    pointer-events: none;
+}
+.chart-view {
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.subject-stats {
+    transition: display 0.2s;
 }
 </style>
 </body>
