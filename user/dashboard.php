@@ -262,6 +262,15 @@ else{
             </div>
         </div>
     </div>
+    <!-- Your Subjects Section -->
+    <div class="dashboard-container" style="margin-top: 0;">
+        <div style="grid-column: 1 / -1; text-align:left; margin-bottom: 8px; margin-top: 0;">
+            <h4 style="margin:0; color:#102d4a; font-weight:700; letter-spacing:1px;">Your Subjects</h4>
+        </div>
+        <div class="subjects-grid" role="region" aria-label="Subjects Overview">
+            <!-- Subject cards will be injected here by JS -->
+        </div>
+    </div>
     <script src="../admin/assets/js/vendor-all.min.js"></script>
     <script src="../admin/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../admin/assets/js/plugins/apexcharts.min.js"></script>
@@ -364,7 +373,211 @@ else{
     var submissionBarChart = new ApexCharts(document.querySelector("#submissionBarChart"), submissionBarOptions);
     submissionBarChart.render();
     
+    // Dummy data for subjects
+    var subjects = [
+        {
+            name: 'Mathematics',
+            code: 'MATH101',
+            faculty: 'Dr. John Doe',
+            assignments: { total: 8, completed: 5, pending: 2, due: 1 },
+            notebooks:   { total: 6, completed: 4, pending: 1, due: 1 }
+        },
+        {
+            name: 'Science',
+            code: 'SCI201',
+            faculty: 'Prof. Jane Smith',
+            assignments: { total: 5, completed: 3, pending: 1, due: 1 },
+            notebooks:   { total: 4, completed: 2, pending: 1, due: 1 }
+        },
+        {
+            name: 'English',
+            code: 'ENG301',
+            faculty: 'Ms. Emily Clark',
+            assignments: { total: 7, completed: 4, pending: 2, due: 1 },
+            notebooks:   { total: 5, completed: 3, pending: 1, due: 1 }
+        },
+        {
+            name: 'History',
+            code: 'HIST210',
+            faculty: 'Dr. Alan Brown',
+            assignments: { total: 6, completed: 2, pending: 3, due: 1 },
+            notebooks:   { total: 3, completed: 1, pending: 1, due: 1 }
+        }
+    ];
+
+    // Render subject cards
+    var subjectsGrid = document.querySelector('.subjects-grid');
+    subjects.forEach(function(subject) {
+        var card = document.createElement('div');
+        card.className = 'subject-card';
+        card.tabIndex = 0;
+        card.setAttribute('aria-label', subject.name + ' assignments and notebooks overview');
+        card.innerHTML = `
+            <div class="subject-title">${subject.name} <span class="subject-code">(${subject.code})</span></div>
+            <div class="faculty-name">Faculty: ${subject.faculty}</div>
+            <div class="subject-section assignment-section">
+                <div class="section-label"><i class='fas fa-file-alt'></i> Assignments</div>
+                <div class="subject-stats">
+                    <div class="subject-stat total">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value">${subject.assignments.total}</span>
+                    </div>
+                    <div class="subject-stat completed">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value">${subject.assignments.completed}</span>
+                    </div>
+                    <div class="subject-stat pending">
+                        <span class="stat-label">Pending</span>
+                        <span class="stat-value">${subject.assignments.pending}</span>
+                    </div>
+                    <div class="subject-stat due">
+                        <span class="stat-label">Due</span>
+                        <span class="stat-value">${subject.assignments.due}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="subject-section notebook-section">
+                <div class="section-label"><i class='fas fa-book'></i> Notebooks</div>
+                <div class="subject-stats">
+                    <div class="subject-stat total">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value">${subject.notebooks.total}</span>
+                    </div>
+                    <div class="subject-stat completed">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-value">${subject.notebooks.completed}</span>
+                    </div>
+                    <div class="subject-stat pending">
+                        <span class="stat-label">Pending</span>
+                        <span class="stat-value">${subject.notebooks.pending}</span>
+                    </div>
+                    <div class="subject-stat due">
+                        <span class="stat-label">Due</span>
+                        <span class="stat-value">${subject.notebooks.due}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        subjectsGrid.appendChild(card);
+    });
 </script>
+<style>
+/* Subject Cards Glassmorphism */
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 8px;
+}
+.subject-card {
+    background: rgba(255,255,255,0.18);
+    border-radius: 18px;
+    padding: 22px 20px 18px 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(12px);
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 220px;
+    margin-bottom: 0;
+}
+.subject-card:focus, .subject-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    transform: translateY(-2px) scale(1.03);
+    outline: 2px solid #0097A7;
+}
+.subject-title {
+    font-size: 1.18rem;
+    font-weight: 700;
+    color: #0097A7;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+.subject-code {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #A41E22;
+    margin-left: 4px;
+}
+.faculty-name {
+    font-size: 0.98rem;
+    color: #102d4a;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+.subject-section {
+    width: 100%;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.13);
+    border-radius: 12px;
+    padding: 10px 12px 8px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+.subject-section:last-child {
+    margin-bottom: 0;
+}
+.section-label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.section-label i {
+    color: #0097A7;
+    font-size: 1.1rem;
+}
+.subject-stats {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    justify-content: flex-start;
+}
+.subject-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 56px;
+}
+.subject-stat .stat-label {
+    font-size: 0.93rem;
+    color: #222;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+.subject-stat .stat-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+.subject-stat.total .stat-value {
+    color: #102d4a;
+}
+.subject-stat.completed .stat-value {
+    color: #0097A7;
+}
+.subject-stat.pending .stat-value {
+    color: #F9B600;
+}
+.subject-stat.due .stat-value {
+    color: #A41E22;
+}
+@media (max-width: 991px) {
+    .subjects-grid {
+        gap: 16px;
+    }
+}
+@media (max-width: 767px) {
+    .subjects-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </body>
 
 </html>
