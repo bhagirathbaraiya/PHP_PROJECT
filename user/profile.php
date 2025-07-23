@@ -113,6 +113,30 @@ else{
             flex-direction: column;
             min-width: 0;
         }
+        .btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+            background-color: #0097A7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-control-input{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #0097A7;
+        }
         .profile-glass-label {
             font-size: 0.98rem;
             color: #222;
@@ -248,6 +272,27 @@ else{
                         <div class="profile-glass-field">
                             <span class="profile-glass-label">Division</span>
                             <span class="profile-glass-value">A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-glass-section">
+                    <div class="profile-glass-section-title">Update Credentials</div>
+                    <div class="profile-glass-fields">
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Old Password</span>
+                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Enter Old Password"></span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">New Password</span>
+                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Enter New Password"></span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Confirm New Password</span>
+                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Confirm New Password"></span>
+                        </div>
+                        <div class="profile-glass-field-button">
+                        <span class="profile-glass-label"></span>
+                            <span class="profile-glass-value"><button class="btn btn-primary">Update</button></span>
                         </div>
                     </div>
                 </div>
