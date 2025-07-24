@@ -14,6 +14,7 @@ else{
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/user-responsive.css">
     <link rel="stylesheet" href="../admin/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             margin-top: 70px;
@@ -216,6 +217,51 @@ else{
             font-weight: 500;
             opacity: 0.85;
         }
+        /* Update Credentials Section Improvements */
+        .update-credentials-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 8px;
+        }
+        .update-credentials-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .password-input-wrap {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .form-control-input[type="password"],
+        .form-control-input[type="text"] {
+            flex: 1 1 0;
+            padding-right: 38px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0 4px;
+            color: #0097A7;
+            font-size: 1.15rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password:focus {
+            outline: none;
+        }
+        .eye-icon {
+            font-size: 1.15rem;
+        }
+        .update-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
         @media (max-width: 900px) {
             .profile-glass-card {
                 flex-direction: column;
@@ -253,6 +299,9 @@ else{
             }
             .profile-glass-name {
                 font-size: 1.13rem;
+            }
+            .update-credentials-form {
+                gap: 12px;
             }
         }
     </style>
@@ -316,24 +365,32 @@ else{
                 </div>
                 <div class="profile-glass-section">
                     <div class="profile-glass-section-title">Update Credentials</div>
-                    <div class="profile-glass-fields">
-                        <div class="profile-glass-field">
-                            <span class="profile-glass-label">Old Password</span>
-                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Enter Old Password"></span>
+                    <form class="update-credentials-form" autocomplete="off">
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="old-password">Old Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="old-password" class="form-control-input" placeholder="Enter Old Password" autocomplete="current-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
                         </div>
-                        <div class="profile-glass-field">
-                            <span class="profile-glass-label">New Password</span>
-                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Enter New Password"></span>
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="new-password">New Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="new-password" class="form-control-input" placeholder="Enter New Password" autocomplete="new-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
                         </div>
-                        <div class="profile-glass-field">
-                            <span class="profile-glass-label">Confirm New Password</span>
-                            <span class="profile-glass-value"><input type="text" class="form-control-input" placeholder="Confirm New Password"></span>
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="confirm-password">Confirm New Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="confirm-password" class="form-control-input" placeholder="Confirm New Password" autocomplete="new-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
                         </div>
-                        <div class="profile-glass-field-button">
-                        <span class="profile-glass-label"></span>
-                            <span class="profile-glass-value"><button class="btn btn-primary">Update</button></span>
+                        <div class="update-credentials-field">
+                            <button class="btn btn-primary update-btn" type="submit">Update</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -341,6 +398,24 @@ else{
     <script src="../admin/assets/js/vendor-all.min.js"></script>
     <script src="../admin/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../admin/assets/js/pcoded.min.js"></script>
+    <script>
+    // Password show/hide toggle with Font Awesome icons
+    document.querySelectorAll('.toggle-password').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var input = btn.parentElement.querySelector('input');
+            var icon = btn.querySelector('.eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
 <?php } ?>
