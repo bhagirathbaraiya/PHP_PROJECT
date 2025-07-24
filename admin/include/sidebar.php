@@ -29,14 +29,17 @@
                 <li class="nav-item">
                     <a href="manage-users.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Manage Users</span></a>
                 </li>
-                <li class="nav-item pcoded-hasmenu">
-                    <a href="#" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Manage Complaint</span></a>
-                    <ul class="pcoded-submenu">
-                        <li><a href="all-complaint.php">All Complaints</a></li>
-                        <li><a href="notprocess-complaint.php">Not Process Yet</a></li>
-                        <li><a href="inprocess-complaint.php">In Process</a></li>
-                        <li><a href="closed-complaint.php">Closed Complaints</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <a href="all-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">All Complaints</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="notprocess-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Not Process Yet</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="inprocess-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">In Process</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="closed-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Closed Complaints</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="between-date-userreport.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">User Reports</span></a>
@@ -72,10 +75,30 @@ function filterSidebarOptions() {
 </script>
 <style>
 .pcoded-navbar {
+    width: 260px; /* or your preferred width */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Prevent sidebar itself from scrolling */
     background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%) !important;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     border-right: 1.5px solid rgba(255,255,255,0.35);
     backdrop-filter: blur(12px);
+}
+
+.navbar-wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    /* If you have a header/search bar, subtract its height from 100vh */
+    /* height: calc(100vh - 60px); */
+    /* padding-bottom: 20px;  Optional, for spacing */
 }
 .pcoded-inner-navbar > .nav-item > .nav-link {
     color: #102d4a !important;
@@ -88,12 +111,12 @@ function filterSidebarOptions() {
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .pcoded-inner-navbar > .nav-item > .nav-link:hover, .pcoded-inner-navbar > .nav-item > .nav-link:focus {
-    background: #0097A7 !important;
-    color: #fff !important;
+    background:rgba(0, 150, 167, 0.5) !important;
+	color:rgb(0, 0, 0) !important;
     box-shadow: 0 4px 16px rgba(0,151,167,0.13);
 }
 .pcoded-inner-navbar > .nav-item.active > .nav-link, .pcoded-inner-navbar > .nav-item > .nav-link.active {
-    background: #A41E22 !important;
+    background: #0097A7 !important;
     color: #fff !important;
 }
 .pcoded-inner-navbar .pcoded-submenu {
