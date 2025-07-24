@@ -24,10 +24,12 @@ echo "<script>window.location.href='admin-profile.php'</script>";
 
 <head>
     <title>CMS||Admin Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
    
 
     <!-- vendor css -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin-responsive.css">
     
     
 

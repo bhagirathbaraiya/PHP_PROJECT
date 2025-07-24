@@ -27,7 +27,9 @@ echo "<script>alert('Email id or Mobile no is invalid');</script>";
 
 <head>
 	<title>CMS | Admin Password Recovery</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="assets/css/admin-responsive.css">
 	<script type="text/javascript">
 function valid()
 {

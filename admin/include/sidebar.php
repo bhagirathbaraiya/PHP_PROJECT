@@ -141,3 +141,26 @@ function filterSidebarOptions() {
     border: 1.5px solid #A41E22;
 }
 </style>
+<script>
+// Sidebar toggle for mobile using header button only
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        var sidebar = document.querySelector('.pcoded-navbar');
+        var toggleBtn = document.getElementById('mobile-collapse');
+        if (sidebar && toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                sidebar.classList.toggle('sidebar-collapsed');
+            });
+            // Optional: Hide sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 991) {
+                    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        sidebar.classList.remove('sidebar-collapsed');
+                    }
+                }
+            });
+        }
+    });
+})();
+</script>

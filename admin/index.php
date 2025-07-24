@@ -24,7 +24,9 @@ echo "<script>alert('Invalid username or password');</script>";
 
 <head>
 	<title>CMS | Admin login</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="assets/css/admin-responsive.css">
 </head>
 
 <!-- [ auth-signin ] start -->
