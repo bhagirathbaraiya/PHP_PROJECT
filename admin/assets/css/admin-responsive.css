@@ -113,3 +113,14 @@ body {
     padding: 10px 12px !important;
   }
 } 
+@media (max-width: 991px) {
+  .admin-glass-header .icon-bell,
+  .admin-glass-header .user-profile-img {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .admin-glass-header .dropdown-toggle {
+    display: inline-block !important;
+  }
+} 

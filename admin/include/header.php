@@ -6,11 +6,11 @@
             <img src="../public/LOGO_B.png" alt="Logo Big" class="logo-big" style="height:48px; width:auto; display:inline-block;">
             <img src="../public/LOGO_S.png" alt="Logo Small" class="logo-small" style="height:36px; width:auto; display:none;">
         </a>
-        <a href="#" class="mob-toggler">
+        <a href="#" class="mob-toggler d-none d-lg-inline">
             <i class="feather icon-more-vertical"></i>
         </a>
     </div>
-    <div class="collapse navbar-collapse">
+    <div class="navbar-collapse mt-0">
         <ul class="navbar-nav ml-auto">
             <li>
                 <div class="dropdown">
@@ -53,8 +53,8 @@ $num1 = mysqli_num_rows($rt);
                 <div class="dropdown drp-user d-flex">
                    
 					<div class="pro-head d-flex align-items-center" style="gap:10px; padding:16px 16px 12px 16px; border-bottom:1px solid #e0e7ef;">
-                            <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
-                            <span style="color:#102d4a; font-weight:600; font-size:1.05rem;"> <?php echo "BHAGIRATH"; ?> </span>
+                            <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius user-profile-img" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
+                            <span class="user-name d-none d-lg-inline" style="color:#102d4a; font-weight:600; font-size:1.05rem;"> <?php echo "BHAGIRATH"; ?> </span>
                             <a href="logout.php" class="dud-logout ml-auto" title="Logout" style="color:#A41E22;">
                                 <i class="feather icon-log-out"></i>
                             </a>
@@ -123,6 +123,24 @@ $num1 = mysqli_num_rows($rt);
         }
         .admin-glass-header .dropdown-toggle img {
             margin-right: 0 !important;
+        }
+        .mob-toggler {
+            display: none !important;
+        }
+        .user-name {
+            display: none !important;
+        }
+        .user-profile-img {
+            width: 36px !important;
+            height: 36px !important;
+        }
+    }
+    @media (min-width: 992px) {
+        .mob-toggler {
+            display: inline !important;
+        }
+        .user-name {
+            display: inline !important;
         }
     }
     @media (max-width: 600px) {
