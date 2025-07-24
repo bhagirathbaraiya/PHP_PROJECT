@@ -1,5 +1,7 @@
 <header class="navbar pcoded-header navbar-expand-lg navbar-light header-dark admin-glass-header" style="backdrop-filter: blur(2px); background: rgba(255,255,255,0.18); border-bottom: 1.5px solid rgba(255,255,255,0.35);position:fixed; box-shadow: 0 4px 24px rgba(0,0,0,0.10); width:100%; z-index:1000;">
-    <div class="m-header">
+    <div class="m-header" style="gap:10px;">
+        <a class="mobile-menu" id="mobile-collapse" href="#!" style="margin-right:10px;"><span></span></a>
+        <!-- Hamburger for sidebar toggle -->
         <a href="dashboard.php" class="b-brand d-flex align-items-center" style="gap:10px;">
             <img src="../public/LOGO_B.png" alt="Logo Big" class="logo-big" style="height:48px; width:auto; display:inline-block;">
             <img src="../public/LOGO_S.png" alt="Logo Small" class="logo-small" style="height:36px; width:auto; display:none;">
@@ -83,6 +85,28 @@ $num1 = mysqli_num_rows($rt);
     }
     .b-brand {
         margin-right: auto !important;
+    }
+    /* Force hamburger to the left of the logo in the header */
+    .pcoded-header .m-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        gap: 10px;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .pcoded-header .m-header .mobile-menu {
+        position: relative !important;
+        left: 0 !important;
+        right: auto !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        z-index: 2;
+    }
+    .pcoded-header .m-header .b-brand {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
     @media (max-width: 991px) {
         .logo-big {
