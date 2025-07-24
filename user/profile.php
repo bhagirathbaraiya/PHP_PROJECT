@@ -179,6 +179,43 @@ else{
             font-weight: 500;
             opacity: 0.85;
         }
+        /* Personal Info Section Improvements */
+        .personal-info-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 32px;
+        }
+        .personal-info-fields .telegram-field {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .profile-glass-qr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 6px;
+        }
+        .profile-glass-qr {
+            padding: 8px;
+            width: 90px;
+            height: 90px;
+            border-radius: 16px;
+            border: 2px solid #e0e7ef;
+            margin-bottom: 4px;
+            background: #fff;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+        }
+        .profile-glass-qr-note {
+            font-size: 0.93rem;
+            color: #A41E22;
+            text-align: center;
+            margin-top: 2px;
+            font-weight: 500;
+            opacity: 0.85;
+        }
         @media (max-width: 900px) {
             .profile-glass-card {
                 flex-direction: column;
@@ -191,6 +228,10 @@ else{
             }
             .profile-glass-info {
                 width: 100%;
+            }
+            .personal-info-fields {
+                grid-template-columns: 1fr;
+                gap: 14px 0;
             }
         }
         @media (max-width: 600px) {
@@ -229,7 +270,7 @@ else{
                 <div class="profile-glass-id">Student ID: 123766 , 92320527005</div>
                 <div class="profile-glass-section">
                     <div class="profile-glass-section-title">Personal Information</div>
-                    <div class="profile-glass-fields">
+                    <div class="profile-glass-fields personal-info-fields">
                         <div class="profile-glass-field">
                             <span class="profile-glass-label">Full Name</span>
                             <span class="profile-glass-value">BHAGIRATH BARAIYA</span>
@@ -242,11 +283,9 @@ else{
                             <span class="profile-glass-label">Mobile Number</span>
                             <span class="profile-glass-value">+91 9876543210</span>
                         </div>
-                        <div class="profile-glass-field profile-glass-telegram">
-                            <div>
-                                <span class="profile-glass-label">Telegram ID</span>
-                                <span class="profile-glass-value">@ydf_bot</span>
-                            </div>
+                        <div class="profile-glass-field telegram-field">
+                            <span class="profile-glass-label">Telegram ID</span>
+                            <span class="profile-glass-value">@ydf_bot</span>
                             <div class="profile-glass-qr-wrap">
                                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://t.me/ydf_bot" alt="Telegram QR" class="profile-glass-qr">
                                 <div class="profile-glass-qr-note">Scan to register/update Telegram</div>
