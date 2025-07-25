@@ -123,4 +123,33 @@ body {
   .admin-glass-header .dropdown-toggle {
     display: inline-block !important;
   }
+  /* Header mobile alignment fixes */
+  .pcoded-header .m-header {
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 10px !important;
+  }
+  .pcoded-header .navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+  }
+  .pcoded-header .navbar-nav li {
+    display: flex !important;
+    align-items: center !important;
+    height: auto !important;
+  }
+  .pcoded-header .dropdown {
+    display: flex !important;
+    align-items: center !important;
+  }
+  .pcoded-header .dropdown-toggle {
+    padding: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
 } 
