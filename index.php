@@ -37,12 +37,13 @@ if (isset($_POST['login_submit'])) {
 <head>
     <title>Complaint Management System | Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="rgb(128, 198, 238)">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <link rel="icon" href="public/LOGO_S.png" type="image/gif" />
     <style>
         body {
             min-height: 100vh;
@@ -229,10 +230,11 @@ if (isset($_POST['login_submit'])) {
             </div>
             <button class="login-btn" type="submit" name="login_submit">Login</button>
             <div style="display:flex;justify-content:center;width:100%;margin-top:10px;">
-                <button type="button" class="google-btn" tabindex="0">
-                    <img src="public/google_logo.png" alt="Google Logo" style="width: 24px; height: 24px; display:block; margin:auto;">
-                </button>
+               <button type="button" class="google-btn" tabindex="0">
+                  <img src="public/google_logo.png" alt="Google Logo" style="width: 24px; height: 24px; display:block; margin:auto;">
+               </button>
             </div>
+            <!-- <div class="error-msg">* Forgot password through telegram only *</div> -->
         </form>
     </div>
     <!-- Modal for Telegram password recovery -->
