@@ -6,7 +6,7 @@
 	</div>
 	<!-- [ Pre-loader ] End -->
 	<!-- [ navigation menu ] start -->
-	<nav class="pcoded-navbar" style="background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%); box-shadow: 0 4px 24px rgba(0,0,0,0.10); border-right: 1.5px solid rgba(255,255,255,0.35); backdrop-filter: blur(12px);">
+	<nav class="pcoded-navbar" style="background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%); box-shadow: 0 4px 24px rgba(0,0,0,0.10); border-right: 1.5px solid rgba(255,255,255,0.35); backdrop-filter: blur(2px);">
     <div class="navbar-wrapper">
         <div class="navbar-content scroll-div">
             <!-- Search Bar -->
@@ -18,40 +18,10 @@
                     <a href="dashboard.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="category.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Add Category</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="subcategory.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Add Subcategory</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="state.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Add State</span></a>
-                </li>
-                <li class="nav-item">
                     <a href="manage-users.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Manage Users</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="all-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">All Complaints</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="notprocess-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Not Process Yet</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="inprocess-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">In Process</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="closed-complaint.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Closed Complaints</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="between-date-userreport.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">User Reports</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="between-date-complaintreport.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-align-justify"></i></span><span class="pcoded-mtext">Complaints Report</span></a>
-                </li>
-                <li class="nav-item">
                     <a href="user-search.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-search"></i></span><span class="pcoded-mtext">User Search</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="complaint-search.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-search"></i></span><span class="pcoded-mtext">Search Complaint</span></a>
                 </li>
             </ul>
         </div>
@@ -75,16 +45,16 @@ function filterSidebarOptions() {
 </script>
 <style>
 .pcoded-navbar {
-    width: 260px; /* or your preferred width */
+    width: 240px; /* or your preferred width */
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     overflow: hidden; /* Prevent sidebar itself from scrolling */
-    background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%) !important;
+    background: linear-gradient(135deg, #e0e7ef90 0%, #f7f9fba9 100%) !important;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     border-right: 1.5px solid rgba(255,255,255,0.35);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(2px);
 }
 
 .navbar-wrapper {
