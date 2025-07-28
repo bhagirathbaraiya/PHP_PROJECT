@@ -7,27 +7,37 @@ include_once("user/include/config.php");
 $login_error = '';
 if (isset($_POST['login_submit'])) {
     $id = trim($_POST['login_id'] ?? '');
-    $password = md5(trim($_POST['login_password'] ?? ''));
-    // Try admin login first
-    $query = mysqli_query($con, "SELECT * FROM admin WHERE email='$id' and password='$password'");
-    $num = mysqli_fetch_array($query);
-    if ($num > 0) {
+    $password = trim($_POST['login_password'] ?? '');
+    
+    // Try faculty login first (hardcoded credentials)
+    if ($id === 'faculty' && $password === 'password@123') {
         $_SESSION['alogin'] = $id;
-        $_SESSION['aid'] = $num['id'];
-        header("location:admin/dashboard.php");
+        $_SESSION['aid'] = 'faculty_001';
+        header("location:faculty/dashboard.php");
         exit();
     } else {
-        // Try user login
-        $query = mysqli_query($con, "SELECT id,fullName FROM users WHERE userEmail='$id' and password='$password'");
+        // Try admin login
+        $password_md5 = md5($password);
+        $query = mysqli_query($con, "SELECT * FROM admin WHERE email='$id' and password='$password_md5'");
         $num = mysqli_fetch_array($query);
         if ($num > 0) {
-            $_SESSION['login'] = $id;
-            $_SESSION['id'] = $num['id'];
-            $_SESSION['username'] = $num['fullName'];
-            header("location:user/dashboard.php");
+            $_SESSION['alogin'] = $id;
+            $_SESSION['aid'] = $num['id'];
+            header("location:admin/dashboard.php");
             exit();
         } else {
-            $login_error = 'Invalid credentials.';
+            // Try user login
+            $query = mysqli_query($con, "SELECT id,fullName FROM users WHERE userEmail='$id' and password='$password_md5'");
+            $num = mysqli_fetch_array($query);
+            if ($num > 0) {
+                $_SESSION['login'] = $id;
+                $_SESSION['id'] = $num['id'];
+                $_SESSION['username'] = $num['fullName'];
+                header("location:user/dashboard.php");
+                exit();
+            } else {
+                $login_error = 'Invalid credentials.';
+            }
         }
     }
 }
