@@ -14,7 +14,7 @@
             <div class="dropdown drp-user d-flex">
 
                 <div class="pro-head d-flex align-items-center" style="gap:10px; padding:16px 16px 12px 16px; border-bottom:1px solid #e0e7ef;">
-                    <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius user-profile-img" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
+                    <img src="https://marwadieducation.edu.in/MEFOnline/handler/getImage.ashx?Id=2355" class="img-radius user-profile-img" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
                     <span class="user-name d-none d-lg-inline" style="color:#102d4a; font-weight:600; font-size:1.05rem;"> <?php echo "Faculty"; ?> </span>
                     <a href="logout.php" class="dud-logout ml-auto" title="Logout" style="color:#A41E22;">
                         <i class="feather icon-log-out"></i>
