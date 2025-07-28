@@ -11,7 +11,7 @@ else{
 <html lang="en">
 
 <head>
-    <title>Complaint Management System || Faculty Dashboard</title>
+    <title>Faculty Dashboard || Assignment & Notebook Tracking System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin-responsive.css">
@@ -34,110 +34,98 @@ else{
         <!-- [ breadcrumb ] end -->
         <!-- [ Main Content ] start -->
         <div class="row">
-            <!-- BEGIN: New Admin Dashboard Section (Assignment & Notebook Tracking) -->
+            <!-- BEGIN: Faculty Dashboard Section (Assignment & Notebook Tracking) -->
             <div class="col-12">
                 <div style="padding: 0 0 32px 0;">
                     
+                    <!-- Faculty Overview Stats -->
                     <div class="row" style="margin-bottom: 24px; gap: 0;">
-                        <div class="col-md-2 mb-4">
+                        <div class="col-md-3 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#0097A7;">1,200</div>
-                                    <div class="stat-label">Students</div>
+                                    <div class="stat-value" style="color:#0097A7;">45</div>
+                                    <div class="stat-label">My Students</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-4">
+                        <div class="col-md-3 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">85</div>
-                                    <div class="stat-label">Faculty</div>
+                                    <div class="stat-value" style="color:#A41E22;">4</div>
+                                    <div class="stat-label">My Subjects</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-4">
+                        <div class="col-md-3 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
                                     <div class="stat-value" style="color:#F9B600;">12</div>
-                                    <div class="stat-label">Departments</div>
+                                    <div class="stat-label">Active Classes</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-4">
+                        <div class="col-md-3 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#0097A7;">24</div>
-                                    <div class="stat-label">Courses</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">60</div>
-                                    <div class="stat-label">Subjects</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#F9B600;">36</div>
-                                    <div class="stat-label">Divisions</div>
+                                    <div class="stat-value" style="color:#102d4a;">8</div>
+                                    <div class="stat-label">Pending Reviews</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Assignment & Notebook Tracking Stats -->
                     <div class="row" style="margin-bottom: 24px; gap: 0;">
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#0097A7;">120</div>
-                                    <div class="stat-label">Assignments</div>
+                                    <div class="stat-value" style="color:#0097A7;">28</div>
+                                    <div class="stat-label">Total Assignments</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">110</div>
-                                    <div class="stat-label">Notebooks</div>
+                                    <div class="stat-value" style="color:#A41E22;">25</div>
+                                    <div class="stat-label">Total Notebooks</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">A</div>
-                                    <div class="stat-label">Avg. Grade</div>
+                                    <div class="stat-value" style="color:#F9B600;">5</div>
+                                    <div class="stat-label">Pending Assignments</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#0097A7;">91%</div>
-                                    <div class="stat-label">On-Time Rate</div>
+                                    <div class="stat-value" style="color:#102d4a;">3</div>
+                                    <div class="stat-label">Pending Notebooks</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#F9B600;">1.8</div>
-                                    <div class="stat-label">Avg. Delay (days)</div>
+                                    <div class="stat-value" style="color:#A41E22;">2</div>
+                                    <div class="stat-label">Overdue Items</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2 mb-4">
                             <div class="card glass-card">
                                 <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">12</div>
-                                    <div class="stat-label">Pending Grading</div>
+                                    <div class="stat-value" style="color:#0097A7;">92%</div>
+                                    <div class="stat-label">Submission Rate</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <style>
                         body{
                             margin-top: 70px;
@@ -162,9 +150,38 @@ else{
                         color: #222;
                         font-weight: 600;
                     }
+                    .subject-card {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border-radius: 15px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+                    }
+                    .progress-ring {
+                        width: 80px;
+                        height: 80px;
+                        margin: 0 auto;
+                    }
+                    .progress-ring circle {
+                        fill: none;
+                        stroke-width: 8;
+                        stroke-linecap: round;
+                    }
+                    .progress-ring .bg {
+                        stroke: rgba(255,255,255,0.2);
+                    }
+                    .progress-ring .progress {
+                        stroke: #fff;
+                        stroke-dasharray: 251.2;
+                        stroke-dashoffset: 251.2;
+                        transition: stroke-dashoffset 0.5s ease;
+                    }
                     </style>
+
+                    <!-- Main Tracking Cards -->
                     <div class="row" style="gap: 0;">
-                        <!-- Assignments Stat Card -->
+                        <!-- Assignments Tracking Card -->
                         <div class="col-md-6 col-xl-3 mb-4">
                             <div class="card flat-card widget-primary-card" style="min-height: 140px;">
                                 <div class="row-table">
@@ -172,13 +189,13 @@ else{
                                         <i class="feather icon-file-text"></i>
                                     </div>
                                     <div class="col-sm-9">
-                                        <h4 id="admin-total-assignments">--</h4>
+                                        <h4 id="faculty-total-assignments">28</h4>
                                         <h6>Total Assignments</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Notebooks Stat Card -->
+                        <!-- Notebooks Tracking Card -->
                         <div class="col-md-6 col-xl-3 mb-4">
                             <div class="card flat-card bg-warning" style="min-height: 140px;">
                                 <div class="row-table">
@@ -186,13 +203,13 @@ else{
                                         <i class="feather icon-book"></i>
                                     </div>
                                     <div class="col-sm-9">
-                                        <h4 id="admin-total-notebooks">--</h4>
+                                        <h4 id="faculty-total-notebooks">25</h4>
                                         <h6>Total Notebooks</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Pending Assignments Stat Card -->
+                        <!-- Pending Assignments Card -->
                         <div class="col-md-6 col-xl-3 mb-4">
                             <div class="card flat-card bg-danger" style="min-height: 140px;">
                                 <div class="row-table">
@@ -200,13 +217,13 @@ else{
                                         <i class="feather icon-clock"></i>
                                     </div>
                                     <div class="col-sm-9">
-                                        <h4 id="admin-pending-assignments">--</h4>
+                                        <h4 id="faculty-pending-assignments">5</h4>
                                         <h6>Pending Assignments</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Overdue Notebooks Stat Card -->
+                        <!-- Overdue Items Card -->
                         <div class="col-md-6 col-xl-3 mb-4">
                             <div class="card flat-card widget-purple-card" style="min-height: 140px;">
                                 <div class="row-table">
@@ -214,20 +231,86 @@ else{
                                         <i class="feather icon-alert-triangle"></i>
                                     </div>
                                     <div class="col-sm-9">
-                                        <h4 id="admin-overdue-notebooks">--</h4>
-                                        <h6>Overdue Notebooks</h6>
+                                        <h4 id="faculty-overdue-items">2</h4>
+                                        <h6>Overdue Items</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Subject-wise Overview -->
+                    <div class="row" style="margin-top: 8px;">
+                        <div class="col-12 mb-4">
+                            <div class="card flat-card">
+                                <div class="card-body">
+                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Subject-wise Overview</h5>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <div class="subject-card">
+                                                <h6>Mathematics</h6>
+                                                <div class="progress-ring">
+                                                    <svg width="80" height="80">
+                                                        <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                                        <circle class="progress" cx="40" cy="40" r="36" style="stroke-dashoffset: 75.36;"></circle>
+                                                    </svg>
+                                                </div>
+                                                <p class="text-center mt-2">70% Complete</p>
+                                                <small>8/12 Assignments</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="subject-card">
+                                                <h6>Physics</h6>
+                                                <div class="progress-ring">
+                                                    <svg width="80" height="80">
+                                                        <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                                        <circle class="progress" cx="40" cy="40" r="36" style="stroke-dashoffset: 50.24;"></circle>
+                                                    </svg>
+                                                </div>
+                                                <p class="text-center mt-2">80% Complete</p>
+                                                <small>10/12 Assignments</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="subject-card">
+                                                <h6>Chemistry</h6>
+                                                <div class="progress-ring">
+                                                    <svg width="80" height="80">
+                                                        <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                                        <circle class="progress" cx="40" cy="40" r="36" style="stroke-dashoffset: 100.48;"></circle>
+                                                    </svg>
+                                                </div>
+                                                <p class="text-center mt-2">60% Complete</p>
+                                                <small>6/10 Assignments</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="subject-card">
+                                                <h6>Biology</h6>
+                                                <div class="progress-ring">
+                                                    <svg width="80" height="80">
+                                                        <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                                        <circle class="progress" cx="40" cy="40" r="36" style="stroke-dashoffset: 25.12;"></circle>
+                                                    </svg>
+                                                </div>
+                                                <p class="text-center mt-2">90% Complete</p>
+                                                <small>9/10 Assignments</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Graphs Row -->
                     <div class="row" style="margin-top: 8px;">
                         <div class="col-md-6 col-xl-4 mb-4">
                             <div class="card flat-card" style="min-height: 320px;">
                                 <div class="card-body">
                                     <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Assignments Status</h5>
-                                    <div id="admin-assignments-pie" style="min-height: 180px;"></div>
+                                    <div id="faculty-assignments-pie" style="min-height: 180px;"></div>
                                 </div>
                             </div>
                         </div>
@@ -235,64 +318,41 @@ else{
                             <div class="card flat-card" style="min-height: 320px;">
                                 <div class="card-body">
                                     <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Notebooks Status</h5>
-                                    <div id="admin-notebooks-pie" style="min-height: 180px;"></div>
+                                    <div id="faculty-notebooks-pie" style="min-height: 180px;"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12 col-xl-4 mb-4">
                             <div class="card flat-card" style="min-height: 320px;">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#102d4a; font-weight:600;">Submission Trends</h5>
-                                    <div id="admin-submission-bar" style="min-height: 180px;"></div>
+                                    <h5 class="mb-3" style="color:#102d4a; font-weight:600;">Weekly Submission Trends</h5>
+                                    <div id="faculty-submission-bar" style="min-height: 180px;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Per Faculty/Subject Table -->
+
+                    <!-- Student Performance Table -->
                     <div class="row">
                         <div class="col-12">
                             <div class="card flat-card" style="margin-top: 8px;">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Faculty/Subject Overview</h5>
+                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Student Performance Overview</h5>
                                     <div class="table-responsive">
                                         <table class="table table-hover table-bordered" style="background:rgba(255,255,255,0.95);">
                                             <thead style="background:#e0f7fa;">
                                                 <tr>
-                                                    <th>Faculty</th>
-                                                    <th>Subject</th>
-                                                    <th>Assignments (Total/Pending/Overdue)</th>
-                                                    <th>Notebooks (Total/Pending/Overdue)</th>
-                                                    <th>Last Submission</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="admin-faculty-table-body">
-                                                <!-- Dummy data will be injected by JS -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Top Students Section -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card flat-card" style="margin-top: 8px;">
-                                <div class="card-body">
-                                    <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Top Performing Students</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-bordered" style="background:rgba(255,255,255,0.95);">
-                                            <thead style="background:#ffe0e0;">
-                                                <tr>
-                                                    <th>Name</th>
+                                                    <th>Student Name</th>
                                                     <th>Roll No</th>
-                                                    <th>Assignments Submitted</th>
-                                                    <th>Notebooks Submitted</th>
-                                                    <th>Avg. Grade</th>
+                                                    <th>Subject</th>
+                                                    <th>Assignments (Submitted/Total)</th>
+                                                    <th>Notebooks (Submitted/Total)</th>
+                                                    <th>Average Grade</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-top-students-body">
-                                                <!-- Dummy data will be injected by JS -->
+                                            <tbody id="faculty-student-table-body">
+                                                <!-- Data will be injected by JS -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -300,12 +360,13 @@ else{
                             </div>
                         </div>
                     </div>
-                    <!-- Recent Overdue Section -->
+
+                    <!-- Recent Submissions & Upcoming Deadlines -->
                     <div class="row">
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Recent Overdue Items</h5>
+                                    <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Recent Submissions</h5>
                                     <div class="table-responsive">
                                         <table class="table table-sm table-bordered">
                                             <thead style="background:#ffe0e0;">
@@ -313,17 +374,16 @@ else{
                                                     <th>Type</th>
                                                     <th>Student</th>
                                                     <th>Subject</th>
-                                                    <th>Due Date</th>
-                                                    <th>Days Overdue</th>
+                                                    <th>Submission Date</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-recent-overdue-body"></tbody>
+                                            <tbody id="faculty-recent-submissions-body"></tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Upcoming Deadlines Section -->
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
@@ -336,52 +396,55 @@ else{
                                                     <th>Student</th>
                                                     <th>Subject</th>
                                                     <th>Due Date</th>
+                                                    <th>Days Left</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-upcoming-deadlines-body"></tbody>
+                                            <tbody id="faculty-upcoming-deadlines-body"></tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Submission Rate Trends Graph -->
+
+                    <!-- Performance Analytics -->
                     <div class="row">
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
                                     <h5 class="mb-3" style="color:#102d4a; font-weight:600;">Submission Rate Trends</h5>
-                                    <div id="admin-submission-rate-trend" style="min-height: 180px;"></div>
+                                    <div id="faculty-submission-rate-trend" style="min-height: 180px;"></div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Distribution by Department/Semester -->
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Distribution by Department</h5>
-                                    <div id="admin-distribution-chart" style="min-height: 180px;"></div>
+                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Grade Distribution</h5>
+                                    <div id="faculty-grade-distribution" style="min-height: 180px;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Most Delayed Students & Faculty with Most Pending Work -->
+
+                    <!-- Top Performers & Need Attention -->
                     <div class="row">
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Most Delayed Students</h5>
+                                    <h5 class="mb-3" style="color:#A41E22; font-weight:600;">Top Performing Students</h5>
                                     <div class="table-responsive">
                                         <table class="table table-sm table-bordered">
                                             <thead style="background:#ffe0e0;">
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Roll No</th>
-                                                    <th>Overdue Count</th>
-                                                    <th>Avg. Delay (days)</th>
+                                                    <th>Subject</th>
+                                                    <th>Avg. Grade</th>
+                                                    <th>Completion Rate</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-delayed-students-body"></tbody>
+                                            <tbody id="faculty-top-performers-body"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -390,23 +453,26 @@ else{
                         <div class="col-lg-6 mb-4">
                             <div class="card flat-card">
                                 <div class="card-body">
-                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Faculty with Most Pending Work</h5>
+                                    <h5 class="mb-3" style="color:#0097A7; font-weight:600;">Students Needing Attention</h5>
                                     <div class="table-responsive">
                                         <table class="table table-sm table-bordered">
                                             <thead style="background:#e0f7fa;">
                                                 <tr>
-                                                    <th>Faculty</th>
-                                                    <th>Pending Assignments</th>
-                                                    <th>Pending Notebooks</th>
+                                                    <th>Name</th>
+                                                    <th>Roll No</th>
+                                                    <th>Subject</th>
+                                                    <th>Missing Items</th>
+                                                    <th>Last Activity</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-faculty-pending-body"></tbody>
+                                            <tbody id="faculty-need-attention-body"></tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- Recent Activity Log -->
                     <div class="row">
                         <div class="col-12 mb-4">
@@ -418,12 +484,13 @@ else{
                                             <thead style="background:#f7f7f7;">
                                                 <tr>
                                                     <th>Time</th>
-                                                    <th>User</th>
+                                                    <th>Student</th>
                                                     <th>Action</th>
+                                                    <th>Subject</th>
                                                     <th>Details</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="admin-activity-log-body"></tbody>
+                                            <tbody id="faculty-activity-log-body"></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -432,7 +499,7 @@ else{
                     </div>
                 </div>
             </div>
-            <!-- END: New Admin Dashboard Section -->
+            <!-- END: Faculty Dashboard Section -->
         </div>
         <!-- [ Main Content ] end -->
     </div>
@@ -444,174 +511,171 @@ else{
 <!-- Apex Chart -->
 <script src="assets/js/plugins/apexcharts.min.js"></script>
 
-
 <!-- custom-chart js -->
 <script src="assets/js/pages/dashboard-main.js"></script>
 <script>
-    // Dummy data for admin dashboard
-    var adminAssignmentStats = {
-        total: 120,
-        pending: 18,
-        submitted: 95,
-        overdue: 7
+    // Faculty-specific data for assignment and notebook tracking
+    var facultyAssignmentStats = {
+        total: 28,
+        pending: 5,
+        submitted: 20,
+        overdue: 3,
+        graded: 18
     };
-    var adminNotebookStats = {
-        total: 110,
-        pending: 15,
-        submitted: 90,
-        overdue: 5
+    var facultyNotebookStats = {
+        total: 25,
+        pending: 3,
+        submitted: 22,
+        overdue: 2,
+        graded: 20
     };
+
     // Set stat card values
-    document.getElementById('admin-total-assignments').textContent = adminAssignmentStats.total;
-    document.getElementById('admin-total-notebooks').textContent = adminNotebookStats.total;
-    document.getElementById('admin-pending-assignments').textContent = adminAssignmentStats.pending;
-    document.getElementById('admin-overdue-notebooks').textContent = adminNotebookStats.overdue;
+    document.getElementById('faculty-total-assignments').textContent = facultyAssignmentStats.total;
+    document.getElementById('faculty-total-notebooks').textContent = facultyNotebookStats.total;
+    document.getElementById('faculty-pending-assignments').textContent = facultyAssignmentStats.pending;
+    document.getElementById('faculty-overdue-items').textContent = facultyAssignmentStats.overdue + facultyNotebookStats.overdue;
+
     // Pie Chart for Assignments
-    var adminAssignmentsPie = new ApexCharts(document.querySelector("#admin-assignments-pie"), {
+    var facultyAssignmentsPie = new ApexCharts(document.querySelector("#faculty-assignments-pie"), {
         chart: { type: 'pie', height: 180 },
-        series: [adminAssignmentStats.pending, adminAssignmentStats.submitted, adminAssignmentStats.overdue],
+        series: [facultyAssignmentStats.pending, facultyAssignmentStats.submitted, facultyAssignmentStats.overdue],
         labels: ['Pending', 'Submitted', 'Overdue'],
         colors: ['#F9B600', '#0097A7', '#A41E22'],
-        legend: { show: true, fontSize: '15px', position: 'bottom', labels: { colors: ['#222'] } },
-        dataLabels: { style: { fontSize: '15px', fontWeight: 'bold' } }
+        legend: { show: true, fontSize: '12px', position: 'bottom', labels: { colors: ['#222'] } },
+        dataLabels: { style: { fontSize: '12px', fontWeight: 'bold' } }
     });
-    adminAssignmentsPie.render();
+    facultyAssignmentsPie.render();
+
     // Pie Chart for Notebooks
-    var adminNotebooksPie = new ApexCharts(document.querySelector("#admin-notebooks-pie"), {
+    var facultyNotebooksPie = new ApexCharts(document.querySelector("#faculty-notebooks-pie"), {
         chart: { type: 'pie', height: 180 },
-        series: [adminNotebookStats.pending, adminNotebookStats.submitted, adminNotebookStats.overdue],
+        series: [facultyNotebookStats.pending, facultyNotebookStats.submitted, facultyNotebookStats.overdue],
         labels: ['Pending', 'Submitted', 'Overdue'],
         colors: ['#F9B600', '#0097A7', '#A41E22'],
-        legend: { show: true, fontSize: '15px', position: 'bottom', labels: { colors: ['#222'] } },
-        dataLabels: { style: { fontSize: '15px', fontWeight: 'bold' } }
+        legend: { show: true, fontSize: '12px', position: 'bottom', labels: { colors: ['#222'] } },
+        dataLabels: { style: { fontSize: '12px', fontWeight: 'bold' } }
     });
-    adminNotebooksPie.render();
-    // Submission Trends Bar Chart
-    var adminSubmissionBar = new ApexCharts(document.querySelector("#admin-submission-bar"), {
+    facultyNotebooksPie.render();
+
+    // Weekly Submission Trends Bar Chart
+    var facultySubmissionBar = new ApexCharts(document.querySelector("#faculty-submission-bar"), {
         chart: { type: 'bar', height: 200 },
         series: [
-            { name: 'Assignments', data: [20, 30, 25, 45] },
-            { name: 'Notebooks', data: [18, 28, 22, 42] }
+            { name: 'Assignments', data: [5, 8, 12, 6, 9, 4, 7] },
+            { name: 'Notebooks', data: [4, 6, 10, 5, 8, 3, 6] }
         ],
-        xaxis: { categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], labels: { style: { fontSize: '15px', colors: ['#102d4a'] } } },
-        legend: { show: true, fontSize: '15px', position: 'bottom', labels: { colors: ['#222'] } },
-        dataLabels: { style: { fontSize: '15px', fontWeight: 'bold' } },
+        xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], labels: { style: { fontSize: '12px', colors: ['#102d4a'] } } },
+        legend: { show: true, fontSize: '12px', position: 'bottom', labels: { colors: ['#222'] } },
+        dataLabels: { style: { fontSize: '10px', fontWeight: 'bold' } },
         colors: ['#0097A7', '#F9B600']
     });
-    adminSubmissionBar.render();
-    // Faculty/Subject Table Dummy Data
-    var facultyTableData = [
-        { faculty: 'Dr. John Doe', subject: 'Mathematics', assignments: '30/4/1', notebooks: '25/3/0', last: '2024-06-01' },
-        { faculty: 'Prof. Jane Smith', subject: 'Science', assignments: '28/3/2', notebooks: '24/2/1', last: '2024-06-02' },
-        { faculty: 'Ms. Emily Clark', subject: 'English', assignments: '32/5/2', notebooks: '28/4/1', last: '2024-06-03' },
-        { faculty: 'Dr. Alan Brown', subject: 'History', assignments: '30/6/2', notebooks: '33/6/3', last: '2024-06-04' }
+    facultySubmissionBar.render();
+
+    // Student Performance Table Data
+    var studentTableData = [
+        { name: 'Alice Johnson', roll: 'U2021001', subject: 'Mathematics', assignments: '8/10', notebooks: '7/8', grade: 'A+', status: 'Excellent' },
+        { name: 'Bob Lee', roll: 'U2021002', subject: 'Physics', assignments: '9/12', notebooks: '8/10', grade: 'A', status: 'Good' },
+        { name: 'Cathy Smith', roll: 'U2021003', subject: 'Chemistry', assignments: '6/10', notebooks: '5/8', grade: 'B+', status: 'Average' },
+        { name: 'David Brown', roll: 'U2021004', subject: 'Biology', assignments: '7/10', notebooks: '6/8', grade: 'A-', status: 'Good' },
+        { name: 'Eve Adams', roll: 'U2021005', subject: 'Mathematics', assignments: '5/10', notebooks: '4/8', grade: 'B', status: 'Needs Attention' }
     ];
-    var facultyTableBody = document.getElementById('admin-faculty-table-body');
-    facultyTableData.forEach(function(row) {
+    var studentTableBody = document.getElementById('faculty-student-table-body');
+    studentTableData.forEach(function(row) {
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.faculty}</td><td>${row.subject}</td><td>${row.assignments}</td><td>${row.notebooks}</td><td>${row.last}</td>`;
-        facultyTableBody.appendChild(tr);
+        tr.innerHTML = `<td>${row.name}</td><td>${row.roll}</td><td>${row.subject}</td><td>${row.assignments}</td><td>${row.notebooks}</td><td>${row.grade}</td><td><span class="badge badge-${row.status === 'Excellent' ? 'success' : row.status === 'Good' ? 'info' : row.status === 'Average' ? 'warning' : 'danger'}">${row.status}</span></td>`;
+        studentTableBody.appendChild(tr);
     });
-    // Top Students Dummy Data
-    var topStudentsData = [
-        { name: 'Alice Johnson', roll: 'U2021001', assignments: 28, notebooks: 25, grade: 'A+' },
-        { name: 'Bob Lee', roll: 'U2021002', assignments: 27, notebooks: 24, grade: 'A' },
-        { name: 'Cathy Smith', roll: 'U2021003', assignments: 26, notebooks: 23, grade: 'A' },
-        { name: 'David Brown', roll: 'U2021004', assignments: 25, notebooks: 22, grade: 'A-' }
+
+    // Recent Submissions Data
+    var recentSubmissions = [
+        {type:'Assignment', student:'Alice Johnson', subject:'Mathematics', date:'2024-06-03', status:'Submitted'},
+        {type:'Notebook', student:'Bob Lee', subject:'Physics', date:'2024-06-03', status:'Submitted'},
+        {type:'Assignment', student:'Cathy Smith', subject:'Chemistry', date:'2024-06-02', status:'Late'},
+        {type:'Notebook', student:'David Brown', subject:'Biology', date:'2024-06-02', status:'Submitted'}
     ];
-    var topStudentsBody = document.getElementById('admin-top-students-body');
-    topStudentsData.forEach(function(row) {
+    var submissionsBody = document.getElementById('faculty-recent-submissions-body');
+    recentSubmissions.forEach(function(row){
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.name}</td><td>${row.roll}</td><td>${row.assignments}</td><td>${row.notebooks}</td><td>${row.grade}</td>`;
-        topStudentsBody.appendChild(tr);
+        tr.innerHTML = `<td>${row.type}</td><td>${row.student}</td><td>${row.subject}</td><td>${row.date}</td><td><span class="badge badge-${row.status === 'Submitted' ? 'success' : 'warning'}">${row.status}</span></td>`;
+        submissionsBody.appendChild(tr);
     });
-    // Quick Stats Dummy Data
-    document.getElementById('admin-avg-grade').textContent = 'A';
-    document.getElementById('admin-ontime-rate').textContent = '91%';
-    document.getElementById('admin-avg-delay').textContent = '1.8';
-    document.getElementById('admin-pending-grading').textContent = '12';
-    // Recent Overdue Dummy Data
-    var recentOverdue = [
-        {type:'Assignment', student:'Alice Johnson', subject:'Mathematics', due:'2024-06-01', days:2},
-        {type:'Notebook', student:'Bob Lee', subject:'Science', due:'2024-06-02', days:1},
-        {type:'Assignment', student:'Cathy Smith', subject:'English', due:'2024-05-30', days:4},
-        {type:'Notebook', student:'David Brown', subject:'History', due:'2024-06-01', days:2}
-    ];
-    var overdueBody = document.getElementById('admin-recent-overdue-body');
-    recentOverdue.forEach(function(row){
-        var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.type}</td><td>${row.student}</td><td>${row.subject}</td><td>${row.due}</td><td>${row.days}</td>`;
-        overdueBody.appendChild(tr);
-    });
-    // Upcoming Deadlines Dummy Data
+
+    // Upcoming Deadlines Data
     var upcomingDeadlines = [
-        {type:'Assignment', student:'Alice Johnson', subject:'Mathematics', due:'2024-06-07'},
-        {type:'Notebook', student:'Bob Lee', subject:'Science', due:'2024-06-06'},
-        {type:'Assignment', student:'Cathy Smith', subject:'English', due:'2024-06-05'},
-        {type:'Notebook', student:'David Brown', subject:'History', due:'2024-06-04'}
+        {type:'Assignment', student:'Alice Johnson', subject:'Mathematics', due:'2024-06-07', days:4},
+        {type:'Notebook', student:'Bob Lee', subject:'Physics', due:'2024-06-06', days:3},
+        {type:'Assignment', student:'Cathy Smith', subject:'Chemistry', due:'2024-06-05', days:2},
+        {type:'Notebook', student:'David Brown', subject:'Biology', due:'2024-06-04', days:1}
     ];
-    var upcomingBody = document.getElementById('admin-upcoming-deadlines-body');
+    var deadlinesBody = document.getElementById('faculty-upcoming-deadlines-body');
     upcomingDeadlines.forEach(function(row){
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.type}</td><td>${row.student}</td><td>${row.subject}</td><td>${row.due}</td>`;
-        upcomingBody.appendChild(tr);
+        tr.innerHTML = `<td>${row.type}</td><td>${row.student}</td><td>${row.subject}</td><td>${row.due}</td><td><span class="badge badge-${row.days <= 1 ? 'danger' : row.days <= 3 ? 'warning' : 'info'}">${row.days} days</span></td>`;
+        deadlinesBody.appendChild(tr);
     });
-    // Submission Rate Trends Dummy Data
-    var adminSubmissionRateTrend = new ApexCharts(document.querySelector("#admin-submission-rate-trend"), {
+
+    // Submission Rate Trends
+    var facultySubmissionRateTrend = new ApexCharts(document.querySelector("#faculty-submission-rate-trend"), {
         chart: { type: 'line', height: 180 },
         series: [
-            { name: 'Assignments', data: [12, 18, 22, 25, 30, 28, 35] },
-            { name: 'Notebooks', data: [10, 15, 18, 20, 22, 21, 25] }
+            { name: 'Assignments', data: [85, 88, 92, 89, 94, 91, 95] },
+            { name: 'Notebooks', data: [82, 85, 88, 86, 90, 87, 92] }
         ],
-        xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-        colors: ['#0097A7', '#A41E22']
+        xaxis: { categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'] },
+        colors: ['#0097A7', '#A41E22'],
+        yaxis: { labels: { formatter: function(val) { return val + '%'; } } }
     });
-    adminSubmissionRateTrend.render();
-    // Distribution by Department Dummy Data
-    var adminDistributionChart = new ApexCharts(document.querySelector("#admin-distribution-chart"), {
+    facultySubmissionRateTrend.render();
+
+    // Grade Distribution
+    var facultyGradeDistribution = new ApexCharts(document.querySelector("#faculty-grade-distribution"), {
         chart: { type: 'donut', height: 180 },
-        series: [40, 30, 20, 10],
-        labels: ['Science', 'Arts', 'Commerce', 'Engineering'],
-        colors: ['#0097A7', '#F9B600', '#A41E22', '#102d4a']
+        series: [25, 35, 20, 15, 5],
+        labels: ['A+', 'A', 'B+', 'B', 'C'],
+        colors: ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545']
     });
-    adminDistributionChart.render();
-    // Most Delayed Students Dummy Data
-    var delayedStudents = [
-        {name:'Eve Adams', roll:'U2021005', count:3, delay:4.2},
-        {name:'Frank Green', roll:'U2021006', count:2, delay:3.5},
-        {name:'Grace Lee', roll:'U2021007', count:2, delay:3.0},
-        {name:'Helen White', roll:'U2021008', count:1, delay:2.8}
+    facultyGradeDistribution.render();
+
+    // Top Performers Data
+    var topPerformers = [
+        {name:'Alice Johnson', roll:'U2021001', subject:'Mathematics', grade:'A+', rate:'95%'},
+        {name:'Bob Lee', roll:'U2021002', subject:'Physics', grade:'A', rate:'92%'},
+        {name:'David Brown', roll:'U2021004', subject:'Biology', grade:'A-', rate:'88%'},
+        {name:'Cathy Smith', roll:'U2021003', subject:'Chemistry', grade:'B+', rate:'85%'}
     ];
-    var delayedBody = document.getElementById('admin-delayed-students-body');
-    delayedStudents.forEach(function(row){
+    var performersBody = document.getElementById('faculty-top-performers-body');
+    topPerformers.forEach(function(row){
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.name}</td><td>${row.roll}</td><td>${row.count}</td><td>${row.delay}</td>`;
-        delayedBody.appendChild(tr);
+        tr.innerHTML = `<td>${row.name}</td><td>${row.roll}</td><td>${row.subject}</td><td>${row.grade}</td><td>${row.rate}</td>`;
+        performersBody.appendChild(tr);
     });
-    // Faculty with Most Pending Work Dummy Data
-    var facultyPending = [
-        {faculty:'Dr. John Doe', assignments:4, notebooks:3},
-        {faculty:'Prof. Jane Smith', assignments:3, notebooks:2},
-        {faculty:'Ms. Emily Clark', assignments:5, notebooks:4},
-        {faculty:'Dr. Alan Brown', assignments:6, notebooks:6}
+
+    // Students Needing Attention Data
+    var needAttention = [
+        {name:'Eve Adams', roll:'U2021005', subject:'Mathematics', missing:3, last:'2024-05-28'},
+        {name:'Frank Green', roll:'U2021006', subject:'Physics', missing:2, last:'2024-05-29'},
+        {name:'Grace Lee', roll:'U2021007', subject:'Chemistry', missing:4, last:'2024-05-27'},
+        {name:'Helen White', roll:'U2021008', subject:'Biology', missing:1, last:'2024-05-30'}
     ];
-    var facultyPendingBody = document.getElementById('admin-faculty-pending-body');
-    facultyPending.forEach(function(row){
+    var attentionBody = document.getElementById('faculty-need-attention-body');
+    needAttention.forEach(function(row){
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.faculty}</td><td>${row.assignments}</td><td>${row.notebooks}</td>`;
-        facultyPendingBody.appendChild(tr);
+        tr.innerHTML = `<td>${row.name}</td><td>${row.roll}</td><td>${row.subject}</td><td>${row.missing}</td><td>${row.last}</td>`;
+        attentionBody.appendChild(tr);
     });
-    // Recent Activity Log Dummy Data
+
+    // Recent Activity Log Data
     var activityLog = [
-        {time:'2024-06-03 10:15', user:'Alice Johnson', action:'Submitted Assignment', details:'Mathematics - Assignment 3'},
-        {time:'2024-06-03 09:50', user:'Bob Lee', action:'Graded Notebook', details:'Science - Notebook 2'},
-        {time:'2024-06-03 09:30', user:'Cathy Smith', action:'Commented', details:'English - Assignment 2'},
-        {time:'2024-06-03 09:10', user:'David Brown', action:'Submitted Notebook', details:'History - Notebook 1'}
+        {time:'2024-06-03 10:15', student:'Alice Johnson', action:'Submitted Assignment', subject:'Mathematics', details:'Assignment 3 - Calculus'},
+        {time:'2024-06-03 09:50', student:'Bob Lee', action:'Graded Notebook', subject:'Physics', details:'Notebook 2 - Mechanics'},
+        {time:'2024-06-03 09:30', student:'Cathy Smith', action:'Late Submission', subject:'Chemistry', details:'Assignment 2 - Organic Chemistry'},
+        {time:'2024-06-03 09:10', student:'David Brown', action:'Submitted Notebook', subject:'Biology', details:'Notebook 1 - Cell Biology'}
     ];
-    var activityBody = document.getElementById('admin-activity-log-body');
+    var activityBody = document.getElementById('faculty-activity-log-body');
     activityLog.forEach(function(row){
         var tr = document.createElement('tr');
-        tr.innerHTML = `<td>${row.time}</td><td>${row.user}</td><td>${row.action}</td><td>${row.details}</td>`;
+        tr.innerHTML = `<td>${row.time}</td><td>${row.student}</td><td>${row.action}</td><td>${row.subject}</td><td>${row.details}</td>`;
         activityBody.appendChild(tr);
     });
     </script>
