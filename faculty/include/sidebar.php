@@ -23,6 +23,9 @@
                 <li class="nav-item">
                     <a href="user-search.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-search"></i></span><span class="pcoded-mtext">User Search</span></a>
                 </li>
+                <li class="nav-item">
+                    <a href="my-classes.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">My Classes</span></a>
+                </li>
             </ul>
         </div>
     </div>
