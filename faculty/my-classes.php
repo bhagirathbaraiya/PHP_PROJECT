@@ -735,9 +735,8 @@ function viewClassDetails(classId) {
 
 // Manage class function
 function manageClass(classId) {
-    // This would typically redirect to a class management page
-    alert('Opening class management for: ' + classId);
-    // window.location.href = 'manage-class.php?id=' + classId;
+    // Redirect to manage-class.php with the class ID
+    window.location.href = 'manage-class.php?id=' + classId;
 }
 
 // Toggle graphs visibility

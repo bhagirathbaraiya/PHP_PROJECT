@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <link rel="stylesheet" href="assets/css/responsive-class.css">
 </head>
 <body>
-<?php include('include/sidebar.php'); ?>
 <?php include('include/header.php'); ?>
 <div class="pcoded-main-container">
     <div class="pcoded-content">
