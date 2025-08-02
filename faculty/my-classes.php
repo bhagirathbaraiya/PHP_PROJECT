@@ -129,16 +129,20 @@ else{
                         font-weight: 600;
                     }
                     .class-card {
-                        background: rgba(255,255,255,0.18);
-                        color: #333;
+                        background: linear-gradient(135deg, #f7f9fb 0%, #e0e7ef 100%);
+                        color: #222;
                         border-radius: 18px;
-                        padding: 22px 20px 18px 20px;
-                        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-                        border: 1.5px solid rgba(255,255,255,0.35);
-                        backdrop-filter: blur(12px);
+                        padding: 18px 14px 16px 14px;
+                        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+                        border: 1.5px solid #e3e8ee;
                         transition: box-shadow 0.2s, transform 0.2s;
                         position: relative;
                         overflow: hidden;
+                        min-height: 220px;
+                        margin-bottom: 0;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
                     }
                     .class-card::before {
                         content: '';
@@ -147,130 +151,113 @@ else{
                         left: 0;
                         right: 0;
                         height: 4px;
-                        background: #0097A7;
+                        background: linear-gradient(90deg, #0097A7 0%, #A41E22 100%);
+                        border-radius: 18px 18px 0 0;
                     }
                     .class-card:hover {
-                        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.14);
                         transform: translateY(-2px) scale(1.03);
                     }
                     .class-card h5 {
                         color: #0097A7;
-                        font-weight: 600;
-                        margin-bottom: 10px;
+                        font-weight: 700;
+                        margin-bottom: 8px;
+                        font-size: 1.18rem;
+                        letter-spacing: 0.5px;
+                    }
+                    .class-card p {
+                        color: #6c757d;
+                        margin-bottom: 5px;
+                        font-size: 0.98rem;
+                    }
+                    .class-card small {
+                        color: #adb5bd;
+                        font-size: 0.92rem;
                     }
                     .class-stats {
                         display: flex;
                         justify-content: space-between;
                         margin-top: 15px;
                         flex-wrap: wrap;
+                        gap: 8px;
                     }
                     .class-stat {
                         text-align: center;
                         flex: 1;
                         min-width: 80px;
+                        background: #fff;
+                        border-radius: 10px;
+                        box-shadow: 0 1px 6px rgba(0,151,167,0.04);
+                        padding: 10px 0 8px 0;
+                        margin: 0 2px;
                     }
                     .class-stat-value {
-                        font-size: 1.5rem;
+                        font-size: 1.35rem;
                         font-weight: 700;
                         color: #0097A7;
+                        margin-bottom: 2px;
                     }
                     .class-stat-label {
-                        font-size: 0.9rem;
+                        font-size: 0.92rem;
                         color: #6c757d;
                         font-weight: 500;
-                    }
-                    .student-avatar {
-                        width: 35px;
-                        height: 35px;
-                        border-radius: 50%;
-                        background: #0097A7;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: white;
-                        font-weight: 600;
-                        margin-right: 5px;
                     }
                     .progress-ring {
                         width: 60px;
                         height: 60px;
                         margin: 0 auto;
-                    }
-                    .progress-ring circle {
-                        fill: none;
-                        stroke-width: 6;
-                        stroke-linecap: round;
-                    }
-                    .progress-ring .bg {
-                        stroke: #e9ecef;
-                    }
-                    .progress-ring .progress {
-                        stroke: #0097A7;
-                        stroke-dasharray: 188.5;
-                        stroke-dashoffset: 188.5;
-                        transition: stroke-dashoffset 0.5s ease;
-                    }
-                    .filter-buttons {
-                        margin-bottom: 20px;
-                    }
-                    .filter-btn {
                         background: #fff;
-                        border: 1px solid #0097A7;
-                        color: #0097A7;
-                        border-radius: 20px;
-                        padding: 8px 16px;
-                        margin-right: 10px;
-                        margin-bottom: 10px;
-                        transition: all 0.3s ease;
-                        font-weight: 500;
-                    }
-                    .filter-btn.active,
-                    .filter-btn:hover {
-                        background: #0097A7;
-                        color: white;
-                        border-color: #0097A7;
+                        border-radius: 50%;
+                        box-shadow: 0 1px 8px rgba(0,151,167,0.07);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     .class-card .btn {
                         background: #0097A7;
                         color: white;
                         border: none;
                         border-radius: 8px;
-                        padding: 6px 12px;
-                        font-size: 0.85rem;
+                        padding: 6px 14px;
+                        font-size: 0.92rem;
+                        font-weight: 500;
+                        margin-right: 8px;
+                        margin-bottom: 4px;
                         transition: all 0.3s ease;
+                        box-shadow: 0 1px 6px rgba(0,151,167,0.07);
+                    }
+                    .class-card .btn:last-child {
+                        margin-right: 0;
                     }
                     .class-card .btn:hover {
                         background: #A41E22;
                         transform: translateY(-1px);
                     }
                     .class-card .btn:focus {
-                        box-shadow: 0 0 0 0.2rem rgba(0,151,167,0.25);
+                        box-shadow: 0 0 0 0.2rem rgba(0,151,167,0.18);
                     }
-                    .class-card p {
-                        color: #6c757d;
-                        margin-bottom: 5px;
+                    .class-graph {
+                        background: #fff;
+                        border-radius: 12px;
+                        box-shadow: 0 1px 8px rgba(0,151,167,0.07);
+                        margin-top: 10px;
+                        padding: 8px 0;
                     }
-                    .class-card small {
-                        color: #adb5bd;
-                    }
-                    
-                    /* Responsive Design */
                     @media (max-width: 768px) {
+                        .class-card {
+                            padding: 12px 6px 12px 6px;
+                            min-height: 180px;
+                        }
                         .class-stats {
                             flex-direction: column;
-                            gap: 10px;
+                            gap: 8px;
                         }
                         .class-stat {
                             min-width: auto;
-                        }
-                        .class-card {
-                            padding: 15px;
-                        }
-                        .stat-value {
-                            font-size: 1.8rem;
+                            padding: 8px 0 6px 0;
                         }
                         .class-stat-value {
-                            font-size: 1.3rem;
+                            font-size: 1.1rem;
                         }
                         .filter-btn {
                             padding: 6px 12px;
@@ -281,24 +268,29 @@ else{
                     }
                     
                     @media (max-width: 576px) {
-                        .glass-card {
-                            min-height: 90px;
-                        }
-                        .stat-value {
-                            font-size: 1.6rem;
-                        }
-                        .stat-label {
-                            font-size: 0.95rem;
-                        }
-                        .class-card h5 {
-                            font-size: 1.1rem;
-                        }
-                        .class-card p {
-                            font-size: 0.9rem;
-                        }
-                        .class-card small {
-                            font-size: 0.8rem;
-                        }
+                        .pcoded-main-container,
+    .pcoded-content,
+    .row,
+    .col-12,
+    .card,
+    .flat-card,
+    .glass-card {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+    body {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+    .class-card {
+        padding-right: 4px !important;
+        padding-left: 4px !important;
+        border-radius: 14px;
+    }
                     }
                     </style>
 
@@ -323,6 +315,12 @@ else{
                         </div>
                     </div>
 
+                    <!-- Toggle Graphs Button -->
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                        <button id="toggle-graphs-btn" class="btn btn-outline-info" style="border-radius: 12px; padding: 8px 20px;">
+                            <i class="feather icon-bar-chart-2"></i> <span id="toggle-graphs-label">Show Graphs</span>
+                        </button>
+                    </div>
                     <!-- Classes Grid -->
                     <div class="row" id="classes-container">
                         <!-- Class 1: Mathematics -->
@@ -355,6 +353,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('math101')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('math101')">Manage</button>
@@ -392,6 +391,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('physics201')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('physics201')">Manage</button>
@@ -429,6 +429,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('chem301')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('chem301')">Manage</button>
@@ -466,6 +467,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('bio401')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('bio401')">Manage</button>
@@ -503,6 +505,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('advmath501')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('advmath501')">Manage</button>
@@ -540,6 +543,7 @@ else{
                                         <div class="class-stat-label">Attendance</div>
                                     </div>
                                 </div>
+                                <div class="class-graph" style="display:none; min-height:120px;"></div>
                                 <div style="margin-top: 15px;">
                                     <button class="btn btn-sm" onclick="viewClassDetails('physicslab202')">View Details</button>
                                     <button class="btn btn-sm" onclick="manageClass('physicslab202')">Manage</button>
@@ -612,6 +616,7 @@ else{
     <script src="assets/js/vendor-all.min.js"></script>
     <script src="assets/js/plugins/bootstrap.min.js"></script>
     <script src="assets/js/pcoded.min.js"></script>
+    <script src="assets/js/plugins/apexcharts.min.js"></script>
 
 <script>
 // Filter functionality
@@ -755,6 +760,69 @@ function manageClass(classId) {
     // This would typically redirect to a class management page
     alert('Opening class management for: ' + classId);
     // window.location.href = 'manage-class.php?id=' + classId;
+}
+
+// Toggle graphs visibility
+let graphsVisible = false;
+document.getElementById('toggle-graphs-btn').addEventListener('click', function() {
+    graphsVisible = !graphsVisible;
+    document.getElementById('toggle-graphs-label').textContent = graphsVisible ? 'Show Stats' : 'Show Graphs';
+    const cards = document.querySelectorAll('.class-card');
+    cards.forEach(card => {
+        const stats = card.querySelector('.class-stats');
+        const graph = card.querySelector('.class-graph');
+        if (graphsVisible) {
+            stats.style.display = 'none';
+            graph.style.display = 'block';
+            renderClassGraph(card, graph);
+        } else {
+            stats.style.display = 'flex';
+            graph.style.display = 'none';
+        }
+    });
+});
+
+// Simple graph rendering (replace with Chart.js or ApexCharts for real graphs)
+function renderClassGraph(card, graphDiv) {
+    // Get stats from the card
+    const stats = card.querySelectorAll('.class-stat-value');
+    let labels = [];
+    let data = [];
+    stats.forEach((stat, idx) => {
+        labels.push(stat.nextElementSibling.textContent);
+        let val = stat.textContent;
+        if (val.includes('/')) val = val.split('/')[0];
+        if (val.includes('%')) val = val.replace('%','');
+        data.push(Number(val));
+    });
+
+    // Clear previous chart if exists
+    graphDiv.innerHTML = '';
+    // Create a unique id for the chart
+    const chartId = 'piechart-' + Math.random().toString(36).substr(2, 9);
+    graphDiv.id = chartId;
+
+    // Pie chart options
+    var options = {
+        chart: {
+            type: 'pie',
+            height: 120
+        },
+        series: data,
+        labels: labels,
+        colors: ['#0097A7', '#F9B600', '#A41E22'],
+        legend: {
+            show: true,
+            position: 'bottom',
+            fontSize: '13px',
+            labels: { colors: ['#222'] }
+        },
+        dataLabels: {
+            style: { fontSize: '13px', fontWeight: 'bold' }
+        }
+    };
+    var chart = new ApexCharts(document.getElementById(chartId), options);
+    chart.render();
 }
 
 // Initialize page
