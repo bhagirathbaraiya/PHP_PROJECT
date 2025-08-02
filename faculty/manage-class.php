@@ -1,12 +1,14 @@
-<?php session_start();
+<?php 
+session_start();
 include('include/config.php');
-if(strlen($_SESSION['alogin'])==0)
-{
+if(strlen($_SESSION['alogin'])==0) {
     header('location:../index.php');
     exit();
 }
-else{
 ?>
+document.addEventListener('DOMContentLoaded', function() {
+    populateTable(students);
+});>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,8 +71,10 @@ else{
                                             <tr>
                                                 <th>Sr No</th>
                                                 <th class="sortable" data-sort="name">Student <span class="sort-icon">↕</span></th>
-                                                <th class="sortable" data-sort="notebook">Notebook <span class="sort-icon">↕</span></th>
-                                                <th class="sortable" data-sort="assignment">Assignment <span class="sort-icon">↕</span></th>
+                                                <th class="sortable" data-sort="notebook">Notebook Status <span class="sort-icon">↕</span></th>
+                                                <th><input type="checkbox" id="selectAllNotebooks"></th>
+                                                <th class="sortable" data-sort="assignment">Assignment Status <span class="sort-icon">↕</span></th>
+                                                <th><input type="checkbox" id="selectAllAssignments"></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -95,6 +99,42 @@ else{
 </div>
 <script>
 // Example student data (replace with PHP from DB)
+// Add event listeners for select all checkboxes
+document.getElementById('selectAllNotebooks').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.notebook-checkbox');
+    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+});
+
+document.getElementById('selectAllAssignments').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.assignment-checkbox');
+    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+});
+
+// Function to populate table with student data
+function populateTable(studentsData) {
+    const tbody = document.querySelector('#students-table tbody');
+    tbody.innerHTML = '';
+    
+    studentsData.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${student.name}</td>
+            <td>${student.notebook}</td>
+            <td>
+                <input type="checkbox" class="notebook-checkbox" id="notebook-${student.roll}">
+                <label for="notebook-${student.roll}">Notebook ${index + 1}</label>
+            </td>
+            <td>${student.assignment}</td>
+            <td>
+                <input type="checkbox" class="assignment-checkbox" id="assignment-${student.roll}">
+                <label for="assignment-${student.roll}">Assignment ${index + 1}</label>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
 const students = [
     {name: 'Alice Johnson', email: 'alice.johnson@example.com', roll: 'U2021001', image: 'https://randomuser.me/api/portraits/women/1.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
     {name: 'Bob Lee', email: 'bob.lee@example.com', roll: 'U2021002', image: 'https://randomuser.me/api/portraits/men/2.jpg', notebook: 'Pending', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 8, totalNotebooks: 5, notebooksSubmitted: 4},
@@ -140,12 +180,18 @@ function renderTable(page) {
                             <span style="font-size:0.9em;color:#A41E22;">${student.roll}</span>
                         </div>
                     </div>
-                </td>
+                </td>               
                 <td style="vertical-align:middle;">
                     <span class="badge badge-${student.notebook === 'Submitted' ? 'success' : student.notebook === 'Pending' ? 'warning' : 'secondary'}">${student.notebooksSubmitted}/${student.totalNotebooks} ${student.notebook}</span>
                 </td>
                 <td style="vertical-align:middle;">
+                    <span >Helo</span>
+                </td>
+                <td style="vertical-align:middle;">
                     <span class="badge badge-${student.assignment === 'Submitted' ? 'success' : student.assignment === 'Pending' ? 'warning' : student.assignment === 'Overdue' ? 'danger' : 'secondary'}">${student.assignmentsSubmitted}/${student.totalAssignments} ${student.assignment}</span>
+                </td>
+                <td style="vertical-align:middle;">
+                    <span >Helo</span>
                 </td>
             </tr>
         `;
@@ -255,7 +301,13 @@ function renderTable(page) {
                     <span class="badge badge-${student.notebook === 'Submitted' ? 'success' : student.notebook === 'Pending' ? 'warning' : 'secondary'}">${student.notebooksSubmitted}/${student.totalNotebooks} ${student.notebook}</span>
                 </td>
                 <td style="vertical-align:middle;">
+                    <input type="checkbox" class="notebook-checkbox" id="notebook-${student.roll}" ${student.notebook === 'Submitted' ? 'checked' : ''}>
+                </td>
+                <td style="vertical-align:middle;">
                     <span class="badge badge-${student.assignment === 'Submitted' ? 'success' : student.assignment === 'Pending' ? 'warning' : student.assignment === 'Overdue' ? 'danger' : 'secondary'}">${student.assignmentsSubmitted}/${student.totalAssignments} ${student.assignment}</span>
+                </td>
+                <td style="vertical-align:middle;">
+                    <input type="checkbox" class="assignment-checkbox" id="assignment-${student.roll}" ${student.assignment === 'Submitted' ? 'checked' : ''}>
                 </td>
             </tr>
         `;
@@ -349,8 +401,53 @@ document.addEventListener('DOMContentLoaded', function() {
         .d-flex.gap-2 { gap: 4px !important; }
         img.rounded-circle { width: 32px !important; height: 32px !important; }
     }
+
+    /* Custom checkbox styling */
+    input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 2px solid #1abc9c;
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    input[type="checkbox"]:checked {
+        background: #1abc9c;
+        border-color: #1abc9c;
+    }
+
+    input[type="checkbox"]:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    input[type="checkbox"]:hover {
+        border-color: #16a085;
+        box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
+    }
+
+    #selectAllNotebooks,
+    #selectAllAssignments {
+        margin-right: 8px;
+    }
+
+    .notebook-checkbox,
+    .assignment-checkbox {
+        margin: 0 auto;
+        display: block;
+    }
 </style>
 </body>
 </html>
-<?php } ?>
 
