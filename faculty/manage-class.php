@@ -52,17 +52,24 @@ else{
                             </div>
                         </div>
                         <hr>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <h5 style="color:#0097A7;">Student List</h5>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search students..." style="border-radius:8px;">
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-12">
-                                <h5 style="color:#0097A7;">Student List</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-hover table-sm" id="students-table">
                                         <thead style="background:#f8f9fa;">
                                             <tr>
                                                 <th>Sr No</th>
-                                                <th>Student</th>
-                                                <th>Notebook</th>
-                                                <th>Assignment</th>
+                                                <th class="sortable" data-sort="name">Student <span class="sort-icon">↕</span></th>
+                                                <th class="sortable" data-sort="notebook">Notebook <span class="sort-icon">↕</span></th>
+                                                <th class="sortable" data-sort="assignment">Assignment <span class="sort-icon">↕</span></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -162,6 +169,116 @@ function renderPagination() {
     });
 }
 
+// Search functionality
+let filteredStudents = [...students];
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    filteredStudents = students.filter(student => 
+        student.name.toLowerCase().includes(searchTerm) ||
+        student.email.toLowerCase().includes(searchTerm) ||
+        student.roll.toLowerCase().includes(searchTerm)
+    );
+    currentPage = 1;
+    renderTable(currentPage);
+    renderPagination();
+});
+
+// Sorting functionality
+let currentSort = { column: '', direction: 'asc' };
+document.querySelectorAll('.sortable').forEach(header => {
+    header.addEventListener('click', function() {
+        const column = this.getAttribute('data-sort');
+        
+        // Update sort direction
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.column = column;
+            currentSort.direction = 'asc';
+        }
+
+        // Update sort icons
+        document.querySelectorAll('.sort-icon').forEach(icon => {
+            icon.textContent = '↕';
+        });
+        this.querySelector('.sort-icon').textContent = currentSort.direction === 'asc' ? '↓' : '↑';
+
+        // Sort the filtered students
+        filteredStudents.sort((a, b) => {
+            let valueA, valueB;
+            if (column === 'name') {
+                valueA = a.name;
+                valueB = b.name;
+            } else if (column === 'notebook') {
+                valueA = a.notebook;
+                valueB = b.notebook;
+            } else if (column === 'assignment') {
+                valueA = a.assignment;
+                valueB = b.assignment;
+            }
+
+            if (valueA < valueB) return currentSort.direction === 'asc' ? -1 : 1;
+            if (valueA > valueB) return currentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        currentPage = 1;
+        renderTable(currentPage);
+        renderPagination();
+    });
+});
+
+// Modified render functions to use filteredStudents instead of students
+function renderTable(page) {
+    const tbody = document.querySelector('#students-table tbody');
+    tbody.innerHTML = '';
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageStudents = filteredStudents.slice(start, end);
+    pageStudents.forEach((student, idx) => {
+        tbody.innerHTML += `
+            <tr>
+                <td style="vertical-align:middle;">${start + idx + 1}</td>
+                <td style="vertical-align:middle;">
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="${student.image}" alt="${student.name}" class="rounded-circle" style="width:44px;height:44px;object-fit:cover;border:2px solid #e3e8ee;">
+                        <div>
+                            <span style="font-weight:600;color:#102d4a;">${student.name}</span><br>
+                            <span style="font-size:0.95em;color:#666;">${student.email}</span><br>
+                            <span style="font-size:0.9em;color:#A41E22;">${student.roll}</span>
+                        </div>
+                    </div>
+                </td>
+                <td style="vertical-align:middle;">
+                    <span class="badge badge-${student.notebook === 'Submitted' ? 'success' : student.notebook === 'Pending' ? 'warning' : 'secondary'}">${student.notebooksSubmitted}/${student.totalNotebooks} ${student.notebook}</span>
+                </td>
+                <td style="vertical-align:middle;">
+                    <span class="badge badge-${student.assignment === 'Submitted' ? 'success' : student.assignment === 'Pending' ? 'warning' : student.assignment === 'Overdue' ? 'danger' : 'secondary'}">${student.assignmentsSubmitted}/${student.totalAssignments} ${student.assignment}</span>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderPagination() {
+    const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
+    const pagination = document.getElementById('students-pagination');
+    pagination.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        pagination.innerHTML += `<li class="page-item${i === currentPage ? ' active' : ''}"><a class="page-link" href="#">${i}</a></li>`;
+    }
+    // Add click event
+    Array.from(pagination.querySelectorAll('a')).forEach((a, idx) => {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentPage = idx + 1;
+            renderTable(currentPage);
+            renderPagination();
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Analytics update
     document.getElementById('total-students').textContent = students.length;
@@ -193,6 +310,28 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 1.7rem;
         font-weight: 700;
         color: #1abc9c;
+    }
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+    .sortable:hover {
+        background-color: #f0f0f0;
+    }
+    .sort-icon {
+        display: inline-block;
+        margin-left: 5px;
+        color: #666;
+    }
+    #searchInput {
+        border: 1px solid #e3e8ee;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+    }
+    #searchInput:focus {
+        border-color: #0097A7;
+        box-shadow: 0 0 0 0.2rem rgba(0, 151, 167, 0.25);
+        outline: none;
     }
     @media (max-width: 991px) {
         .stat-box { min-width: 90px; font-size: 0.95em; }
