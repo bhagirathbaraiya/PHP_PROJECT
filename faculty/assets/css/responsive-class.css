@@ -1,0 +1,137 @@
+.stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+}
+
+.stat-box {
+    flex: 1;
+    min-width: 140px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border: 1.5px solid #e3e8ee;
+    margin: 0;
+    padding: 12px 8px;
+}
+
+@media (max-width: 991px) {
+    .stats-container {
+        gap: 10px;
+    }
+    
+    .stat-box {
+        min-width: calc(50% - 5px);
+        margin: 0;
+    }
+
+    .table-responsive {
+        margin: 0 -15px;
+        padding: 0 15px;
+        width: calc(100% + 30px);
+    }
+
+    .d-flex.flex-wrap.justify-content-between.align-items-center {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .d-flex.flex-wrap.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .row.mb-3 {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .col-12.col-md-6 {
+        width: 100%;
+    }
+
+    .table td {
+        white-space: normal;
+    }
+
+    td .d-flex.align-items-center.gap-2 {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px !important;
+    }
+
+    td .d-flex.align-items-center.gap-2 img {
+        margin: 0 auto;
+    }
+
+    .badge {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-box {
+        min-width: 100%;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .table {
+        font-size: 0.9em;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .pagination .page-item {
+        margin: 2px;
+    }
+
+    td .d-flex.align-items-center.gap-2 img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+}
+
+/* Fix for mobile table scrolling */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Improved table cell spacing for mobile */
+.table td, .table th {
+    padding: 8px;
+}
+
+/* Better button spacing on mobile */
+.btn {
+    margin: 5px;
+    white-space: normal;
+}
+
+/* Improved search input for mobile */
+#searchInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}

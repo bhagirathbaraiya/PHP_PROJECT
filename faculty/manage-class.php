@@ -14,6 +14,7 @@ else{
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin-responsive.css">
+    <link rel="stylesheet" href="assets/css/responsive-class.css">
 </head>
 <body>
 <?php include('include/sidebar.php'); ?>
@@ -32,7 +33,7 @@ else{
                                 <h4 style="color:#1abc9c; font-weight:600; margin-bottom: 4px;">Manage Class</h4>
                                 <p style="color:#666; margin-bottom: 0;">Course: <span style="color:#0097A7;font-weight:600;">Physics 201</span> &nbsp; | &nbsp; Division: <span style="color:#A41E22;font-weight:600;">A</span></p>
                             </div>
-                            <div class="d-flex gap-3">
+                            <div class="d-flex flex-wrap gap-3 stats-container">
                                 <div class="stat-box text-center">
                                     <div class="stat-title">Total Students</div>
                                     <div class="stat-value" id="total-students">25</div>
