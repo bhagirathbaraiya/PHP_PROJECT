@@ -98,26 +98,30 @@ else{
                     <style>
                         body{
                             margin-top: 70px;
+                            background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%);
+                            color: #102d4a;
+                            font-family: 'Segoe UI', Arial, sans-serif;
                         }
                     .glass-card {
-                        background: #fff;
-                        border-radius: 12px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-                        border: 1px solid #e9ecef;
+                        background: rgba(255,255,255,0.18);
+                        border-radius: 18px;
+                        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+                        border: 1.5px solid rgba(255,255,255,0.35);
+                        backdrop-filter: blur(12px);
                         min-height: 110px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        transition: all 0.3s ease;
+                        transition: box-shadow 0.2s, transform 0.2s;
                     }
                     .glass-card:hover {
-                        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-                        transform: translateY(-2px);
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+                        transform: translateY(-2px) scale(1.03);
                     }
                     .stat-value {
                         font-size: 2.1rem;
                         font-weight: 700;
-                        color: #1abc9c;
+                        color: #0097A7;
                     }
                     .stat-label {
                         font-size: 1.05rem;
@@ -125,14 +129,14 @@ else{
                         font-weight: 600;
                     }
                     .class-card {
-                        background: #fff;
+                        background: rgba(255,255,255,0.18);
                         color: #333;
-                        border-radius: 12px;
-                        padding: 20px;
-                        margin-bottom: 20px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-                        transition: all 0.3s ease;
-                        border: 1px solid #e9ecef;
+                        border-radius: 18px;
+                        padding: 22px 20px 18px 20px;
+                        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+                        border: 1.5px solid rgba(255,255,255,0.35);
+                        backdrop-filter: blur(12px);
+                        transition: box-shadow 0.2s, transform 0.2s;
                         position: relative;
                         overflow: hidden;
                     }
@@ -143,14 +147,14 @@ else{
                         left: 0;
                         right: 0;
                         height: 4px;
-                        background: #1abc9c;
+                        background: #0097A7;
                     }
                     .class-card:hover {
-                        transform: translateY(-3px);
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+                        transform: translateY(-2px) scale(1.03);
                     }
                     .class-card h5 {
-                        color: #1abc9c;
+                        color: #0097A7;
                         font-weight: 600;
                         margin-bottom: 10px;
                     }
@@ -168,7 +172,7 @@ else{
                     .class-stat-value {
                         font-size: 1.5rem;
                         font-weight: 700;
-                        color: #1abc9c;
+                        color: #0097A7;
                     }
                     .class-stat-label {
                         font-size: 0.9rem;
@@ -179,7 +183,7 @@ else{
                         width: 35px;
                         height: 35px;
                         border-radius: 50%;
-                        background: #1abc9c;
+                        background: #0097A7;
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
@@ -201,7 +205,7 @@ else{
                         stroke: #e9ecef;
                     }
                     .progress-ring .progress {
-                        stroke: #1abc9c;
+                        stroke: #0097A7;
                         stroke-dasharray: 188.5;
                         stroke-dashoffset: 188.5;
                         transition: stroke-dashoffset 0.5s ease;
@@ -211,8 +215,8 @@ else{
                     }
                     .filter-btn {
                         background: #fff;
-                        border: 1px solid #1abc9c;
-                        color: #1abc9c;
+                        border: 1px solid #0097A7;
+                        color: #0097A7;
                         border-radius: 20px;
                         padding: 8px 16px;
                         margin-right: 10px;
@@ -220,18 +224,14 @@ else{
                         transition: all 0.3s ease;
                         font-weight: 500;
                     }
-                    .filter-btn.active {
-                        background: #1abc9c;
-                        color: white;
-                        border-color: #1abc9c;
-                    }
+                    .filter-btn.active,
                     .filter-btn:hover {
-                        background: #1abc9c;
+                        background: #0097A7;
                         color: white;
-                        border-color: #1abc9c;
+                        border-color: #0097A7;
                     }
                     .class-card .btn {
-                        background: #1abc9c;
+                        background: #0097A7;
                         color: white;
                         border: none;
                         border-radius: 8px;
@@ -240,11 +240,11 @@ else{
                         transition: all 0.3s ease;
                     }
                     .class-card .btn:hover {
-                        background: #159a80;
+                        background: #A41E22;
                         transform: translateY(-1px);
                     }
                     .class-card .btn:focus {
-                        box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+                        box-shadow: 0 0 0 0.2rem rgba(0,151,167,0.25);
                     }
                     .class-card p {
                         color: #6c757d;
@@ -766,4 +766,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
-<?php } ?> 
+<?php } ?>
