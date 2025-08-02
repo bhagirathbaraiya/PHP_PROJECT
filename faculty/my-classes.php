@@ -294,33 +294,25 @@ else{
                     }
                     </style>
 
-                    <!-- Filter Buttons -->
+                    <!-- Remove Filter Buttons and Toggle Graphs Button -->
+                    <!-- Themed Search Bar -->
                     <div class="row" style="margin-bottom: 20px;">
-                        <div class="col-12">
-                            <div class="card flat-card">
-                                <div class="card-body">
-                                    <h6 style="color:#1abc9c; font-weight:600; margin-bottom: 15px;">Filter Classes:</h6>
-                                    <div class="filter-buttons">
-                                        <button class="btn filter-btn active" onclick="filterClasses('all')">All Classes</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('active')">Active</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('completed')">Completed</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('upcoming')">Upcoming</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('mathematics')">Mathematics</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('physics')">Physics</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('chemistry')">Chemistry</button>
-                                        <button class="btn filter-btn" onclick="filterClasses('biology')">Biology</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-12">
+        <div class="card flat-card" style="background:rgba(255,255,255,0.18); border-radius:16px;">
+            <div class="card-body" style="padding: 18px 18px 10px 18px;">
+                <div style="position:relative; max-width:400px; margin:auto;">
+                    <input type="text" id="class-searchbar" class="form-control"
+                        placeholder="Search classes, subjects, students..."
+                        style="border-radius: 16px; padding: 12px 44px 12px 18px; font-size: 1.08rem; background:rgba(255,255,255,0.7); color:#102d4a; border:1.5px solid #0097A7; box-shadow:0 2px 8px rgba(0,151,167,0.07);">
+                    <span style="position:absolute; right:16px; top:50%; transform:translateY(-50%); color:#0097A7; font-size:1.3rem;">
+                        <i class="feather icon-search"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    <!-- Toggle Graphs Button -->
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-                        <button id="toggle-graphs-btn" class="btn btn-outline-info" style="border-radius: 12px; padding: 8px 20px;">
-                            <i class="feather icon-bar-chart-2"></i> <span id="toggle-graphs-label">Show Graphs</span>
-                        </button>
-                    </div>
                     <!-- Classes Grid -->
                     <div class="row" id="classes-container">
                         <!-- Class 1: Mathematics -->
@@ -619,34 +611,20 @@ else{
     <script src="assets/js/plugins/apexcharts.min.js"></script>
 
 <script>
-// Filter functionality
-function filterClasses(filter) {
-    const classes = document.querySelectorAll('.class-item');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    
-    // Update active button
-    filterButtons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    classes.forEach(classItem => {
-        const subject = classItem.getAttribute('data-subject');
-        const status = classItem.getAttribute('data-status');
-        
-        if (filter === 'all') {
-            classItem.style.display = 'block';
-        } else if (filter === 'active' && status === 'active') {
-            classItem.style.display = 'block';
-        } else if (filter === 'completed' && status === 'completed') {
-            classItem.style.display = 'block';
-        } else if (filter === 'upcoming' && status === 'upcoming') {
-            classItem.style.display = 'block';
-        } else if (filter === subject) {
-            classItem.style.display = 'block';
+// Add search functionality
+document.getElementById('class-searchbar').addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    const classItems = document.querySelectorAll('.class-item');
+    classItems.forEach(item => {
+        // Search in class name, subject, stats, and student names (if present in HTML)
+        const text = item.innerText.toLowerCase();
+        if (text.includes(query)) {
+            item.style.display = 'block';
         } else {
-            classItem.style.display = 'none';
+            item.style.display = 'none';
         }
     });
-}
+});
 
 // View class details
 function viewClassDetails(classId) {
@@ -831,6 +809,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('My Classes page loaded');
 });
 </script>
+<style>
+#class-searchbar:focus {
+    border-color: #A41E22;
+    background: #fff;
+}
+body.dark-mode #class-searchbar {
+    background: rgba(30,42,54,0.85);
+    color: #fff;
+    border-color: #1abc9c;
+}
+</style>
 </body>
 
 </html>
