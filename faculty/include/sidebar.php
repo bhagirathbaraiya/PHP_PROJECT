@@ -18,13 +18,10 @@
                     <a href="dashboard.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="manage-users.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Manage Users</span></a>
-                </li>
-                <li class="nav-item">
-                    <a href="user-search.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-search"></i></span><span class="pcoded-mtext">User Search</span></a>
-                </li>
-                <li class="nav-item">
                     <a href="my-classes.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">My Classes</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="userprofile.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">My Profile</span></a>
                 </li>
             </ul>
         </div>

@@ -1,128 +1,422 @@
 <?php
 session_start();
 include('include/config.php');
-if(strlen($_SESSION['alogin'])==0)
-  { 
+if(strlen($_SESSION['id'])==0)
+	{
 header('location:../index.php');
 }
 else{
-
- ?>
-<script language="javascript" type="text/javascript">
-function f2()
-{
-window.close();
-}ser
-function f3()
-{
-window.print(); 
-}
-</script>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>User Profile</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
-<link href="anuj.css" rel="stylesheet" type="text/css">
+    <title>Faculty Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/user-responsive.css">
+    <link rel="stylesheet" href="../admin/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            margin-top: 70px;
+            background: linear-gradient(120deg, #e0e7ef 0%, #f7f9fb 100%);
+            min-height: 100vh;
+        }
+        .profile-glass-bg {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 8px 32px 8px;
+            background: linear-gradient(120deg, #e0e7ef 0%, #f7f9fb 100%);
+        }
+        .profile-glass-card {
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+            background: rgba(255,255,255,0.22);
+            border-radius: 2.5rem;
+            box-shadow: 0 8px 40px 0 rgba(0,0,0,0.13), 0 1.5px 0 rgba(255,255,255,0.25) inset;
+            backdrop-filter: blur(22px) saturate(1.2);
+            border: 1.5px solid rgba(255,255,255,0.38);
+            padding: 40px 48px;
+            max-width: 820px;
+            width: 100%;
+            align-items: flex-start;
+            position: relative;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .profile-glass-card:hover {
+            box-shadow: 0 12px 48px 0 rgba(0,151,167,0.13), 0 2px 0 rgba(255,255,255,0.30) inset;
+            transform: translateY(-2px) scale(1.01);
+        }
+        .profile-glass-image-wrap {
+            flex: 0 0 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin-top: 0;
+        }
+        .profile-glass-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.7);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+            /* margin-bottom: 18px; */
+            background: linear-gradient(135deg, #e0e7ef 0%, #f7f9fb 100%);
+        }
+        .profile-glass-info {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            min-width: 0;
+        }
+        .profile-glass-name {
+            text-align: center;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0097A7;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+        .profile-glass-id {
+            text-align: center;
+            font-size: 1.05rem;
+            color: #A41E22;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        .profile-glass-section {
+            background: rgba(255,255,255,0.18);
+            border-radius: 1.2rem;
+            padding: 18px 22px 14px 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.18);
+            margin-bottom: 0;
+        }
+        .profile-glass-section-title {
+            font-size: 1.13rem;
+            font-weight: 700;
+            color: #0097A7;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .profile-glass-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 32px;
+        }
+        .profile-glass-field {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+            background-color: #0097A7;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-control-input{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #0097A7;
+        }
+        .profile-glass-label {
+            font-size: 0.98rem;
+            color: #222;
+            font-weight: 500;
+            margin-bottom: 2px;
+            opacity: 0.85;
+        }
+        .profile-glass-value {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #102d4a;
+            word-break: break-all;
+        }
+        .profile-glass-telegram {
+            flex-direction: row;
+            align-items: center;
+            gap: 18px;
+        }
+        .profile-glass-qr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 8px;
+        }
+        .profile-glass-qr {
+            padding: 8px;
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            border: 2px solid #e0e7ef;
+            margin-bottom: 4px;
+            background: #fff;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+        }
+        .profile-glass-qr-note {
+            font-size: 0.93rem;
+            color: #A41E22;
+            text-align: center;
+            margin-top: 2px;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+        /* Personal Info Section Improvements */
+        .personal-info-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 32px;
+        }
+        .personal-info-fields .telegram-field {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .profile-glass-qr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 6px;
+        }
+        .profile-glass-qr {
+            padding: 8px;
+            width: 90px;
+            height: 90px;
+            border-radius: 16px;
+            border: 2px solid #e0e7ef;
+            margin-bottom: 4px;
+            background: #fff;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+        }
+        .profile-glass-qr-note {
+            font-size: 0.93rem;
+            color: #A41E22;
+            text-align: center;
+            margin-top: 2px;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+        /* Update Credentials Section Improvements */
+        .update-credentials-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 8px;
+        }
+        .update-credentials-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .password-input-wrap {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .form-control-input[type="password"],
+        .form-control-input[type="text"] {
+            flex: 1 1 0;
+            padding-right: 38px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0 4px;
+            color: #0097A7;
+            font-size: 1.15rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password:focus {
+            outline: none;
+        }
+        .eye-icon {
+            font-size: 1.15rem;
+        }
+        .update-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+        @media (max-width: 900px) {
+            .profile-glass-card {
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+                padding: 32px 10px;
+            }
+            .profile-glass-image-wrap {
+                margin-bottom: 0;
+            }
+            .profile-glass-info {
+                width: 100%;
+            }
+            .personal-info-fields {
+                grid-template-columns: 1fr;
+                gap: 14px 0;
+            }
+        }
+        @media (max-width: 600px) {
+            .profile-glass-card {
+                padding: 16px 2vw;
+                border-radius: 1.2rem;
+            }
+            .profile-glass-image {
+                width: 110px;
+                height: 110px;
+            }
+            .profile-glass-section {
+                padding: 10px 6px 8px 6px;
+                border-radius: 0.8rem;
+            }
+            .profile-glass-fields {
+                grid-template-columns: 1fr;
+                gap: 10px 0;
+            }
+            .profile-glass-name {
+                font-size: 1.13rem;
+            }
+            .update-credentials-form {
+                gap: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<div style="margin-left:50px;">
- <form name="updateticket" id="updateticket" method="post"> 
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
-<?php 
-
-$ret1=mysqli_query($con,"select * FROM users where id='".$_GET['uid']."'");
-while($row=mysqli_fetch_array($ret1))
-{
-?>
-
-    
-  
-		
-    <tr>
-      <td colspan="2" style="text-align:center"><b><?php echo $row['fullName'];?>'s profile</b></td>
-      
-    </tr>
-    
-    
-    <tr>
-      <td  >&nbsp;</td>
-      <td >&nbsp;</td>
-    </tr>
-    <tr height="50">
-      <td><b>Reg Date:</b></td>
-      <td><?php echo htmlentities($row['regDate']); ?></td>
-    </tr>
-    <tr height="50">
-      <td><b>User Email:</b></td>
-      <td><?php echo htmlentities($row['userEmail']); ?></td>
-    </tr>
-
-
-      <tr height="50">
-      <td><b>User Contact no:</b></td>
-      <td><?php echo htmlentities($row['contactNo']); ?></td>
-    </tr>
-    
-
-
-        <tr height="50">
-      <td><b>Address:</b></td>
-      <td><?php echo htmlentities($row['address']); ?></td>
-    </tr>
-
-
-
-        <tr height="50">
-      <td><b>State:</b></td>
-      <td><?php echo htmlentities($row['State']); ?></td>
-    </tr>
-
-
-        <tr height="50">
-      <td><b>Country:</b></td>
-      <td><?php echo htmlentities($row['country']); ?></td>
-    </tr>
-
-
-        <tr height="50">
-      <td><b>Pincode:</b></td>
-      <td><?php echo htmlentities($row['pincode']); ?></td>
-    </tr>  
-
-
-        <tr height="50">
-      <td><b>Last Updation:</b></td>
-      <td><?php echo htmlentities($row['updationDate']); ?></td>
-    </tr>
-     <tr height="50">
-      <td><b>Status:</b></td>
-      <td><?php if($row['status']==1)
-      { echo "Active";
-} else{
-  echo "Block";
-}
-        ?></td>
-    </tr>
-    
-    <tr>
-  
-      <td colspan="2">   
-      <input name="Submit2" type="submit" class="txtbox4" value="Close this window " onClick="return f2();" style="cursor: pointer;"  /></td>
-    </tr>
-   
-    <?php } 
-
- 
-    ?>
- 
-</table>
- </form>
-</div>
-
+    <?php include('include/header.php');?>
+    <?php include('include/sidebar.php');?>
+    <div class="profile-glass-bg">
+        <div class="profile-glass-card">
+            
+            <div class="profile-glass-info">
+            <div class="profile-glass-image-wrap">
+                <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" alt="Student Photo" class="profile-glass-image">
+            </div>
+                <div class="profile-glass-name">BHAGIRATH BARAIYA</div>
+                <div class="profile-glass-id">Student ID: 123766 , 92320527005</div>
+                <div class="profile-glass-section">
+                    <div class="profile-glass-section-title">Personal Information</div>
+                    <div class="profile-glass-fields personal-info-fields">
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Full Name</span>
+                            <span class="profile-glass-value">BHAGIRATH BARAIYA</span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Email</span>
+                            <span class="profile-glass-value">bhagirathbhai.baraiya123766@marwadiuniversity.ac.in</span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Mobile Number</span>
+                            <span class="profile-glass-value">+91 9876543210</span>
+                        </div>
+                        <div class="profile-glass-field telegram-field">
+                            <span class="profile-glass-label">Telegram ID</span>
+                            <span class="profile-glass-value">@ydf_bot</span>
+                            <div class="profile-glass-qr-wrap">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://t.me/ydf_bot" alt="Telegram QR" class="profile-glass-qr">
+                                <div class="profile-glass-qr-note">Scan to register/update Telegram</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-glass-section">
+                    <div class="profile-glass-section-title">Educational Details</div>
+                    <div class="profile-glass-fields">
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Department</span>
+                            <span class="profile-glass-value">Computer Science</span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Course</span>
+                            <span class="profile-glass-value">B.Tech</span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Semester</span>
+                            <span class="profile-glass-value">5th</span>
+                        </div>
+                        <div class="profile-glass-field">
+                            <span class="profile-glass-label">Division</span>
+                            <span class="profile-glass-value">A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-glass-section">
+                    <div class="profile-glass-section-title">Update Credentials</div>
+                    <form class="update-credentials-form" autocomplete="off">
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="old-password">Old Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="old-password" class="form-control-input" placeholder="Enter Old Password" autocomplete="current-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
+                        </div>
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="new-password">New Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="new-password" class="form-control-input" placeholder="Enter New Password" autocomplete="new-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
+                        </div>
+                        <div class="update-credentials-field">
+                            <label class="profile-glass-label" for="confirm-password">Confirm New Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="confirm-password" class="form-control-input" placeholder="Confirm New Password" autocomplete="new-password">
+                                <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
+                            </div>
+                        </div>
+                        <div class="update-credentials-field">
+                            <button class="btn btn-primary update-btn" type="submit">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../admin/assets/js/vendor-all.min.js"></script>
+    <script src="../admin/assets/js/plugins/bootstrap.min.js"></script>
+    <script src="../admin/assets/js/pcoded.min.js"></script>
+    <script>
+    // Password show/hide toggle with Font Awesome icons
+    document.querySelectorAll('.toggle-password').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var input = btn.parentElement.querySelector('input');
+            var icon = btn.querySelector('.eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
-
-     <?php } ?>
+<?php } ?>

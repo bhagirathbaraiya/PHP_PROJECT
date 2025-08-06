@@ -12,7 +12,7 @@ if (isset($_POST['login_submit'])) {
     // Try faculty login first (hardcoded credentials)
     if ($id === 'faculty' && $password === 'password@123') {
         $_SESSION['alogin'] = $id;
-        $_SESSION['aid'] = 'faculty_001';
+        $_SESSION['id'] = 'faculty_001';
         header("location:faculty/dashboard.php");
         exit();
     } else {
