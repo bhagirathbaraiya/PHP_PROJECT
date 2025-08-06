@@ -17,9 +17,30 @@ document.addEventListener('DOMContentLoaded', function() {
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin-responsive.css">
     <link rel="stylesheet" href="assets/css/responsive-class.css">
+    <style>
+      html, body {
+        width: 100vw !important;
+        min-width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        background: #fff;
+      }
+      .pcoded-main-container, .pcoded-content {
+        width: 100vw !important;
+        min-width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box;
+      }
+    </style>
 </head>
 <body>
 <?php include('include/header.php'); ?>
+<?php include('include/sidebar.php');?>
 <div class="pcoded-main-container">
     <div class="pcoded-content">
         <div class="row">
