@@ -202,7 +202,7 @@ if(strlen($_SESSION['alogin'])==0) {
                         <hr>
                         <div class="row">
                             <div class="col-12 text-end">
-                                <button class="btn btn-primary" style="background:#1abc9c; border:none; border-radius:12px; padding:10px 20px;">Export Submissions</button>
+                                <button class="btn btn-primary" style="background:#0097a7; border:none; border-radius:12px; padding:10px 20px;">Export Submissions</button>
                             </div>
                         </div>
                     </div>
@@ -293,7 +293,7 @@ function renderPagination() {
     const pagination = document.getElementById('students-pagination');
     pagination.innerHTML = '';
     for (let i = 1; i <= totalPages; i++) {
-        pagination.innerHTML += `<li class="page-item${i === currentPage ? ' active' : ''}"><a class="page-link" href="#">${i}</a></li>`;
+        pagination.innerHTML += `<li  class="page-item${i === currentPage ? ' active' : ''}"><a style="background-color:#0097a7;color:white;" class="page-link" href="#">${i}</a></li>`;
     }
     // Add click event
     Array.from(pagination.querySelectorAll('a')).forEach((a, idx) => {
