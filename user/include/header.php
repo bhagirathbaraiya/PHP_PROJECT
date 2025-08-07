@@ -6,7 +6,7 @@
             <!-- <strong style="color:#0097A7; letter-spacing:1px; font-size:1.3rem;">Assignment Tracker</strong> -->
         </a>
         <a href="profile.php" class="mob-toggler">
-            <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:50px; height:50px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
+            <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=<?php echo $_SESSION['id']; ?>" class="img-radius" alt="User-Profile-Image" style="width:50px; height:50px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
         </a>
     </div>
     <div class="collapse navbar-collapse">
@@ -14,7 +14,7 @@
             <li>
                 <div class="dropdown drp-user d-flex">
                     <a href="profile.php" class="dropdown-toggle d-flex align-items-center"  style="gap:10px; min-width:120px;">
-                    <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:40px; height:40px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
+                    <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=<?php echo $_SESSION['id']; ?>" class="img-radius" alt="User-Profile-Image" style="width:40px; height:40px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
                         <span style="color:#102d4a; font-weight:600; font-size:1rem;">
                             <?php
                             $ret = mysqli_query($con, "SELECT fname FROM students WHERE grno='" . $_SESSION['id'] . "'");
