@@ -12,7 +12,7 @@ else{
 <html lang="en">
 
 <head>
-    <title>Assignment Management System || Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="../admin/assets/css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="assets/css/user-responsive.css">
@@ -162,21 +162,7 @@ else{
     <?php include('include/header.php');?>
     <!-- [ Header ] end -->
     <div class="dashboard-container">
-        <div class="page-header" style="margin-bottom: 0;">
-            <!-- <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Dashboard Analytics</h5>
-                        </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboard.php" aria-label="Home"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Dashboard Analytics</li>
-                        </ul>
-                    </div>
-                </div>
-            </div> -->
-        </div>
+        
         <!-- Stat Boxes -->
         <div class="stat-grid" role="region" aria-label="Statistics Overview">
             <!-- Assignments Header -->
