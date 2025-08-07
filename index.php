@@ -1,44 +1,83 @@
 <?php
 session_start();
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include_once("user/include/config.php");
 
 // Handle login POST
 $login_error = '';
 if (isset($_POST['login_submit'])) {
-    $id = trim($_POST['login_id'] ?? '');
+    $identifier = trim($_POST['login_id'] ?? '');
     $password = trim($_POST['login_password'] ?? '');
-    
-    // Try faculty login first (hardcoded credentials)
-    if ($id === 'faculty' && $password === 'password@123') {
-        $_SESSION['alogin'] = $id;
-        $_SESSION['id'] = 'faculty_001';
-        header("location:faculty/dashboard.php");
-        exit();
-    } else {
-        // Try admin login
-        $password_md5 = md5($password);
-        $query = mysqli_query($con, "SELECT * FROM admin WHERE email='$id' and password='$password_md5'");
-        $num = mysqli_fetch_array($query);
-        if ($num > 0) {
-            $_SESSION['alogin'] = $id;
-            $_SESSION['aid'] = $num['id'];
-            header("location:admin/dashboard.php");
-            exit();
-        } else {
-            // Try user login
-            $query = mysqli_query($con, "SELECT id,fullName FROM users WHERE userEmail='$id' and password='$password_md5'");
-            $num = mysqli_fetch_array($query);
-            if ($num > 0) {
-                $_SESSION['login'] = $id;
-                $_SESSION['id'] = $num['id'];
-                $_SESSION['username'] = $num['fullName'];
-                header("location:user/dashboard.php");
-                exit();
-            } else {
-                $login_error = 'Invalid credentials.';
+    $user = null;
+    $role = null;
+
+    // 1. Check students (by grno, erno, email, mobile)
+    $stmt = mysqli_prepare($con, "SELECT grno, erno, fname, lname, email, password, status FROM students WHERE grno=? OR erno=? OR email=? OR mobile=? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "ssss", $identifier, $identifier, $identifier, $identifier);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if ($row = mysqli_fetch_assoc($result)) {
+        if ($row['password'] === md5($password) || password_verify($password, $row['password'])) {
+            $user = $row;
+            $role = 'student';
+        }
+    }
+    mysqli_stmt_close($stmt);
+
+    // 2. Check faculty (by erno, email, mobile)
+    if (!$user) {
+        $stmt = mysqli_prepare($con, "SELECT erno, fname, lname, email, password, status FROM faculty WHERE erno=? OR email=? OR mobile=? LIMIT 1");
+        mysqli_stmt_bind_param($stmt, "sss", $identifier, $identifier, $identifier);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        if ($row = mysqli_fetch_assoc($result)) {
+            if ($row['password'] === md5($password) || password_verify($password, $row['password'])) {
+                $user = $row;
+                $role = 'faculty';
             }
         }
+        mysqli_stmt_close($stmt);
+    }
+
+    // 3. Check admin (by email, mobile)
+    if (!$user) {
+        $stmt = mysqli_prepare($con, "SELECT id, fname, lname, email, status, password FROM admin WHERE email=? OR id=? LIMIT 1");
+        mysqli_stmt_bind_param($stmt, "ss", $identifier, $identifier);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        if ($row = mysqli_fetch_assoc($result)) {
+            if (!isset($row['password']) || $row['password'] === md5($password) || password_verify($password, $row['password'])) {
+                $user = $row;
+                $role = 'admin';
+            }
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+    if ($user && $role) {
+        // Set session variables and redirect
+        if ($role == 'student') {
+            $_SESSION['login'] = $user['email'];
+            $_SESSION['id'] = $user['grno'];
+            $_SESSION['username'] = $user['fname'] . ' ' . $user['lname'];
+            header('Location: user/dashboard.php');
+            exit();
+        } elseif ($role == 'faculty') {
+            $_SESSION['alogin'] = $user['email'];
+            $_SESSION['id'] = $user['erno'];
+            $_SESSION['username'] = $user['fname'] . ' ' . $user['lname'];
+            header('Location: faculty/dashboard.php');
+            exit();
+        } elseif ($role == 'admin') {
+            $_SESSION['alogin'] = $user['email'];
+            $_SESSION['aid'] = $user['id'];
+            $_SESSION['username'] = $user['fname'] . ' ' . $user['lname'];
+            header('Location: admin/dashboard.php');
+            exit();
+        }
+    } else {
+        $login_error = 'Invalid credentials or user not found.';
     }
 }
 ?>
@@ -231,7 +270,7 @@ if (isset($_POST['login_submit'])) {
                 <div class="error-msg"><?php echo $login_error; ?></div>
             <?php endif; ?>
             <div class="form-group">
-                <input type="text" class="form-control" name="login_id" id="login_id" placeholder="Email/GR/ER/" required autofocus>
+                <input type="text" class="form-control" name="login_id" id="login_id" placeholder="GR No / ER No / Email / Mobile" required autofocus>
             </div>
             <div class="form-group" style="position:relative;">
                 <input type="password" class="form-control" name="login_password" id="login_password" placeholder="Password" required>
