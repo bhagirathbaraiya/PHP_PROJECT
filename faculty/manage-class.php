@@ -95,7 +95,7 @@ if(strlen($_SESSION['alogin'])==0) {
             width: 20px;
             height: 20px;
             background: white;
-            border: 2px solid #1abc9c;
+            border: 2px solid #0097a7;
             border-radius: 4px;
             cursor: pointer;
             position: relative;
@@ -103,8 +103,8 @@ if(strlen($_SESSION['alogin'])==0) {
         }
 
         input[type="checkbox"]:checked {
-            background: #1abc9c;
-            border-color: #1abc9c;
+            background: #0097a7;
+            border-color: #0097a7;
         }
 
         input[type="checkbox"]:checked::after {
@@ -119,7 +119,7 @@ if(strlen($_SESSION['alogin'])==0) {
         }
 
         input[type="checkbox"]:hover {
-            border-color: #16a085;
+            border-color: #0097a7;
             box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
         }
 
