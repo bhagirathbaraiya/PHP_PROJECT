@@ -17,11 +17,12 @@
                     <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" class="img-radius" alt="User-Profile-Image" style="width:40px; height:40px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #fff; background:#f7f9fb; object-fit:cover;">
                         <span style="color:#102d4a; font-weight:600; font-size:1rem;">
                             <?php
-                            $ret = mysqli_query($con, "select fullname from users where id='" . $_SESSION['id'] . "'");
+                            $ret = mysqli_query($con, "SELECT fname FROM students WHERE grno='" . $_SESSION['id'] . "'");
                             $row = mysqli_fetch_array($ret);
-                            $name = $row['fullname'];
+                            $name = $row['fname'];
                             echo $name;
-                            ?></span><br>
+                            ?>
+                            </span><br>
                             <a href="logout.php" class="dud-logout" title="Logout" style="color:#A41E22;">
                                 <i class="feather icon-log-out"> </i>
                             </a>

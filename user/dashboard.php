@@ -7,6 +7,156 @@ if(strlen($_SESSION['id'])==0)
 header('location:../index.php');
 }
 else{
+    // Get student's GR number from session
+    $student_grno = $_SESSION['id'];
+    
+    // Get student's classes
+    $student_classes_query = "SELECT class_id FROM student_to_class WHERE grno = ?";
+    $stmt = mysqli_prepare($con, $student_classes_query);
+    mysqli_stmt_bind_param($stmt, "i", $student_grno);
+    mysqli_stmt_execute($stmt);
+    $class_result = mysqli_stmt_get_result($stmt);
+    
+    $class_ids = array();
+    while($class_row = mysqli_fetch_assoc($class_result)) {
+        $class_ids[] = $class_row['class_id'];
+    }
+    mysqli_stmt_close($stmt);
+    
+    // Initialize counters
+    $total_assignments = 0;
+    $pending_assignments = 0;
+    $submitted_assignments = 0;
+    $overdue_assignments = 0;
+    $total_notebooks = 0;
+    $pending_notebooks = 0;
+    $submitted_notebooks = 0;
+    $overdue_notebooks = 0;
+    
+    if (!empty($class_ids)) {
+        $class_ids_str = implode(',', array_map('intval', $class_ids));
+        
+        // Get assignments data
+        $assignments_query = "SELECT a.id, a.due_date, 
+                             CASE WHEN asub.id IS NOT NULL THEN 1 ELSE 0 END as is_submitted,
+                             CASE WHEN a.due_date < CURDATE() AND asub.id IS NULL THEN 1 ELSE 0 END as is_overdue
+                             FROM assignments a 
+                             LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.grno = ?
+                             WHERE a.class_id IN ($class_ids_str)";
+        
+        $stmt = mysqli_prepare($con, $assignments_query);
+        mysqli_stmt_bind_param($stmt, "i", $student_grno);
+        mysqli_stmt_execute($stmt);
+        $assignments_result = mysqli_stmt_get_result($stmt);
+        
+        while($assignment = mysqli_fetch_assoc($assignments_result)) {
+            $total_assignments++;
+            if ($assignment['is_submitted']) {
+                $submitted_assignments++;
+            } elseif ($assignment['is_overdue']) {
+                $overdue_assignments++;
+            } else {
+                $pending_assignments++;
+            }
+        }
+        mysqli_stmt_close($stmt);
+        
+        // Get notebooks data
+        $notebooks_query = "SELECT n.id,
+                           CASE WHEN nsub.id IS NOT NULL THEN 1 ELSE 0 END as is_submitted
+                           FROM notebook n 
+                           LEFT JOIN notebook_submissions nsub ON n.id = nsub.notebook_id AND nsub.grno = ?
+                           WHERE n.class_id IN ($class_ids_str)";
+        
+        $stmt = mysqli_prepare($con, $notebooks_query);
+        mysqli_stmt_bind_param($stmt, "i", $student_grno);
+        mysqli_stmt_execute($stmt);
+        $notebooks_result = mysqli_stmt_get_result($stmt);
+        
+        while($notebook = mysqli_fetch_assoc($notebooks_result)) {
+            $total_notebooks++;
+            if ($notebook['is_submitted']) {
+                $submitted_notebooks++;
+            } else {
+                $pending_notebooks++;
+            }
+        }
+        mysqli_stmt_close($stmt);
+        
+        // For notebooks, we'll assume overdue is 0 since there's no due_date field
+        $overdue_notebooks = 0;
+    }
+    
+    // Get subjects (classes) data for the student
+    $subjects_data = array();
+    if (!empty($class_ids)) {
+        $subjects_query = "SELECT c.id, c.name, c.description, 
+                          CONCAT(f.fname, ' ', f.lname) as faculty_name,
+                          f.erno as faculty_id
+                          FROM class c 
+                          LEFT JOIN faculty f ON c.host_id = f.erno
+                          WHERE c.id IN ($class_ids_str)";
+        
+        $subjects_result = mysqli_query($con, $subjects_query);
+        
+        while($subject = mysqli_fetch_assoc($subjects_result)) {
+            // Get assignments data for this class
+            $class_assignments_query = "SELECT COUNT(*) as total,
+                                       SUM(CASE WHEN asub.id IS NOT NULL THEN 1 ELSE 0 END) as submitted,
+                                       SUM(CASE WHEN a.due_date < CURDATE() AND asub.id IS NULL THEN 1 ELSE 0 END) as overdue
+                                       FROM assignments a 
+                                       LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.grno = ?
+                                       WHERE a.class_id = ?";
+            
+            $stmt = mysqli_prepare($con, $class_assignments_query);
+            mysqli_stmt_bind_param($stmt, "ii", $student_grno, $subject['id']);
+            mysqli_stmt_execute($stmt);
+            $class_assign_result = mysqli_stmt_get_result($stmt);
+            $class_assign_data = mysqli_fetch_assoc($class_assign_result);
+            mysqli_stmt_close($stmt);
+            
+            // Get notebooks data for this class
+            $class_notebooks_query = "SELECT COUNT(*) as total,
+                                     SUM(CASE WHEN nsub.id IS NOT NULL THEN 1 ELSE 0 END) as submitted
+                                     FROM notebook n 
+                                     LEFT JOIN notebook_submissions nsub ON n.id = nsub.notebook_id AND nsub.grno = ?
+                                     WHERE n.class_id = ?";
+            
+            $stmt = mysqli_prepare($con, $class_notebooks_query);
+            mysqli_stmt_bind_param($stmt, "ii", $student_grno, $subject['id']);
+            mysqli_stmt_execute($stmt);
+            $class_notebook_result = mysqli_stmt_get_result($stmt);
+            $class_notebook_data = mysqli_fetch_assoc($class_notebook_result);
+            mysqli_stmt_close($stmt);
+            
+            $assignment_total = $class_assign_data['total'] ?: 0;
+            $assignment_submitted = $class_assign_data['submitted'] ?: 0;
+            $assignment_overdue = $class_assign_data['overdue'] ?: 0;
+            $assignment_pending = $assignment_total - $assignment_submitted - $assignment_overdue;
+            
+            $notebook_total = $class_notebook_data['total'] ?: 0;
+            $notebook_submitted = $class_notebook_data['submitted'] ?: 0;
+            $notebook_pending = $notebook_total - $notebook_submitted;
+            
+            $subjects_data[] = array(
+                'name' => $subject['name'] ?: 'Unknown Subject',
+                'description' => $subject['description'] ?: '',
+                'faculty' => $subject['faculty_name'] ?: 'Unknown Faculty',
+                'assignments' => array(
+                    'total' => $assignment_total,
+                    'completed' => $assignment_submitted,
+                    'pending' => $assignment_pending,
+                    'due' => $assignment_overdue
+                ),
+                'notebooks' => array(
+                    'total' => $notebook_total,
+                    'completed' => $notebook_submitted,
+                    'pending' => $notebook_pending,
+                    'due' => 0
+                )
+            );
+        }
+    }
 	?>
 <!DOCTYPE html>
 <html lang="en">
@@ -184,32 +334,32 @@ else{
                 <h4 style="margin:0; color:#0097A7; font-weight:700; letter-spacing:1px;">Assignments</h4>
             </div>
             <!-- Assignments Stat Boxes -->
-            <div class="stat-box" tabindex="0" aria-label="Total Assignments: 12">
+            <div class="stat-box" tabindex="0" aria-label="Total Assignments: <?php echo $total_assignments; ?>">
                 <div class="stat-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Total Assignments</div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value"><?php echo $total_assignments; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Pending Assignments: 3">
+            <div class="stat-box" tabindex="0" aria-label="Pending Assignments: <?php echo $pending_assignments; ?>">
                 <div class="stat-icon"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Pending Assignments</div>
-                    <div class="stat-value">3</div>
+                    <div class="stat-value"><?php echo $pending_assignments; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Submitted Assignments: 8">
+            <div class="stat-box" tabindex="0" aria-label="Submitted Assignments: <?php echo $submitted_assignments; ?>">
                 <div class="stat-icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Submitted Assignments</div>
-                    <div class="stat-value">8</div>
+                    <div class="stat-value"><?php echo $submitted_assignments; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Overdue Assignments: 1">
+            <div class="stat-box" tabindex="0" aria-label="Overdue Assignments: <?php echo $overdue_assignments; ?>">
                 <div class="stat-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Overdue Assignments</div>
-                    <div class="stat-value">1</div>
+                    <div class="stat-value"><?php echo $overdue_assignments; ?></div>
                 </div>
             </div>
             <!-- Notebooks Header -->
@@ -217,32 +367,32 @@ else{
                 <h4 style="margin:0; color:#A41E22; font-weight:700; letter-spacing:1px;">Notebooks</h4>
             </div>
             <!-- Notebook Stat Boxes -->
-            <div class="stat-box" tabindex="0" aria-label="Total Notebooks: 10">
+            <div class="stat-box" tabindex="0" aria-label="Total Notebooks: <?php echo $total_notebooks; ?>">
                 <div class="stat-icon"><i class="fas fa-book" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Total Notebooks</div>
-                    <div class="stat-value">10</div>
+                    <div class="stat-value"><?php echo $total_notebooks; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Pending Notebooks: 2">
+            <div class="stat-box" tabindex="0" aria-label="Pending Notebooks: <?php echo $pending_notebooks; ?>">
                 <div class="stat-icon"><i class="fas fa-hourglass-half" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Pending Notebooks</div>
-                    <div class="stat-value">2</div>
+                    <div class="stat-value"><?php echo $pending_notebooks; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Submitted Notebooks: 7">
+            <div class="stat-box" tabindex="0" aria-label="Submitted Notebooks: <?php echo $submitted_notebooks; ?>">
                 <div class="stat-icon"><i class="fas fa-check-circle" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Submitted Notebooks</div>
-                    <div class="stat-value">7</div>
+                    <div class="stat-value"><?php echo $submitted_notebooks; ?></div>
                 </div>
             </div>
-            <div class="stat-box" tabindex="0" aria-label="Overdue Notebooks: 1">
+            <div class="stat-box" tabindex="0" aria-label="Overdue Notebooks: <?php echo $overdue_notebooks; ?>">
                 <div class="stat-icon"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
                 <div class="stat-info">
                     <div class="stat-title">Overdue Notebooks</div>
-                    <div class="stat-value">1</div>
+                    <div class="stat-value"><?php echo $overdue_notebooks; ?></div>
                 </div>
             </div>
         </div>
@@ -278,31 +428,31 @@ else{
     <script src="../admin/assets/js/plugins/bootstrap.min.js"></script>
     <script src="../admin/assets/js/plugins/apexcharts.min.js"></script>
 <script>
-    // Dummy data for graphs
+    // Real data from PHP
     var assignmentData = {
-        total: 12,
-        pending: 3,
-        submitted: 8,
-        overdue: 1
+        total: <?php echo $total_assignments; ?>,
+        pending: <?php echo $pending_assignments; ?>,
+        submitted: <?php echo $submitted_assignments; ?>,
+        overdue: <?php echo $overdue_assignments; ?>
     };
     var notebookData = {
-        total: 10,
-        pending: 2,
-        submitted: 7,
-        overdue: 1
+        total: <?php echo $total_notebooks; ?>,
+        pending: <?php echo $pending_notebooks; ?>,
+        submitted: <?php echo $submitted_notebooks; ?>,
+        overdue: <?php echo $overdue_notebooks; ?>
     };
-    // Dummy data for progress line chart
+    // Dummy data for progress line chart (can be enhanced later with real data)
     var progressData = {
         categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        assignments: [2, 4, 8, 12],
-        notebooks: [1, 3, 6, 10]
+        assignments: [0, 0, 0, assignmentData.total],
+        notebooks: [0, 0, 0, notebookData.total]
     };
-    // Pie Chart for Assignments
+    // Pie Chart for Assignments (handle empty data)
     var assignmentPieOptions = {
         chart: { type: 'pie', height: 180 },
-        series: [assignmentData.pending, assignmentData.submitted, assignmentData.overdue],
-        labels: ['Pending', 'Submitted', 'Overdue'],
-        colors: ['#F9B600', '#0097A7', '#A41E22'],
+        series: assignmentData.total > 0 ? [assignmentData.pending, assignmentData.submitted, assignmentData.overdue] : [1],
+        labels: assignmentData.total > 0 ? ['Pending', 'Submitted', 'Overdue'] : ['No Data'],
+        colors: assignmentData.total > 0 ? ['#F9B600', '#0097A7', '#A41E22'] : ['#E0E0E0'],
         legend: {
             show: true,
             fontSize: '15px',
@@ -315,16 +465,21 @@ else{
         accessibility: {
             enabled: true,
             description: 'Pie chart showing assignment status breakdown.'
+        },
+        noData: {
+            text: 'No assignments available',
+            align: 'center',
+            verticalAlign: 'middle'
         }
     };
     var assignmentPieChart = new ApexCharts(document.querySelector("#assignmentPieChart"), assignmentPieOptions);
     assignmentPieChart.render();
-    // Pie Chart for Notebooks
+    // Pie Chart for Notebooks (handle empty data)
     var notebookPieOptions = {
         chart: { type: 'pie', height: 180 },
-        series: [notebookData.pending, notebookData.submitted, notebookData.overdue],
-        labels: ['Pending', 'Submitted', 'Overdue'],
-        colors: ['#F9B600', '#0097A7', '#A41E22'],
+        series: notebookData.total > 0 ? [notebookData.pending, notebookData.submitted, notebookData.overdue] : [1],
+        labels: notebookData.total > 0 ? ['Pending', 'Submitted', 'Overdue'] : ['No Data'],
+        colors: notebookData.total > 0 ? ['#F9B600', '#0097A7', '#A41E22'] : ['#E0E0E0'],
         legend: {
             show: true,
             fontSize: '15px',
@@ -337,6 +492,11 @@ else{
         accessibility: {
             enabled: true,
             description: 'Pie chart showing notebook status breakdown.'
+        },
+        noData: {
+            text: 'No notebooks available',
+            align: 'center',
+            verticalAlign: 'middle'
         }
     };
     var notebookPieChart = new ApexCharts(document.querySelector("#notebookPieChart"), notebookPieOptions);
@@ -376,67 +536,49 @@ else{
     var submissionBarChart = new ApexCharts(document.querySelector("#submissionBarChart"), submissionBarOptions);
     submissionBarChart.render();
     
-    // Dummy data for subjects
-    var subjects = [
-        {
-            name: 'Mathematics',
-            code: 'MATH101',
-            faculty: 'Dr. John Doe',
-            assignments: { total: 8, completed: 5, pending: 2, due: 1 },
-            notebooks:   { total: 6, completed: 4, pending: 1, due: 1 }
-        },
-        {
-            name: 'Science',
-            code: 'SCI201',
-            faculty: 'Prof. Jane Smith',
-            assignments: { total: 5, completed: 3, pending: 1, due: 1 },
-            notebooks:   { total: 4, completed: 2, pending: 1, due: 1 }
-        },
-        {
-            name: 'English',
-            code: 'ENG301',
-            faculty: 'Ms. Emily Clark',
-            assignments: { total: 7, completed: 4, pending: 2, due: 1 },
-            notebooks:   { total: 5, completed: 3, pending: 1, due: 1 }
-        },
-        {
-            name: 'History',
-            code: 'HIST210',
-            faculty: 'Dr. Alan Brown',
-            assignments: { total: 6, completed: 2, pending: 3, due: 1 },
-            notebooks:   { total: 3, completed: 1, pending: 1, due: 1 }
-        }
-    ];
+    // Real subjects data from PHP
+    var subjects = <?php echo json_encode($subjects_data); ?>;
 
     // Render subject cards
     var subjectsGrid = document.querySelector('.subjects-grid');
-    subjects.forEach(function(subject, idx) {
-        var card = document.createElement('div');
-        card.className = 'subject-card';
-        card.tabIndex = 0;
-        card.setAttribute('aria-label', subject.name + ' assignments and notebooks overview');
-        card.innerHTML = `
-            <div class="subject-title">${subject.name} <span class="subject-code">(${subject.code})</span></div>
-            <div class="faculty-name">Faculty: ${subject.faculty}</div>
-            <div class="subject-section assignment-section">
-                <div class="section-label"><i class='fas fa-file-alt'></i> Assignments</div>
-                <div class="subject-stats stats-view" id="assignment-stats-${idx}">
-                    <div class="subject-stat total">
-                        <span class="stat-label">Total</span>
-                        <span class="stat-value">${subject.assignments.total}</span>
-                    </div>
-                    <div class="subject-stat completed">
-                        <span class="stat-label">Completed</span>
-                        <span class="stat-value">${subject.assignments.completed}</span>
-                    </div>
-                    <div class="subject-stat pending">
-                        <span class="stat-label">Pending</span>
-                        <span class="stat-value">${subject.assignments.pending}</span>
-                    </div>
-                    <div class="subject-stat due">
-                        <span class="stat-label">Due</span>
-                        <span class="stat-value">${subject.assignments.due}</span>
-                    </div>
+    
+    if (subjects.length === 0) {
+        // Show message when no subjects are enrolled
+        subjectsGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 16px; color: #0097A7;"></i>
+                <h5 style="margin: 0; color: #102d4a;">No Subjects Enrolled</h5>
+                <p style="margin: 8px 0 0 0; color: #666;">You are not enrolled in any classes yet.</p>
+            </div>
+        `;
+    } else {
+        subjects.forEach(function(subject, idx) {
+            var card = document.createElement('div');
+            card.className = 'subject-card';
+            card.tabIndex = 0;
+            card.setAttribute('aria-label', subject.name + ' assignments and notebooks overview');
+            card.innerHTML = `
+                <div class="subject-title">${subject.name}</div>
+                <div class="faculty-name">Faculty: ${subject.faculty}</div>
+                <div class="subject-section assignment-section">
+                    <div class="section-label"><i class='fas fa-file-alt'></i> Assignments</div>
+                    <div class="subject-stats stats-view" id="assignment-stats-${idx}">
+                        <div class="subject-stat total">
+                            <span class="stat-label">Total</span>
+                            <span class="stat-value">${subject.assignments.total}</span>
+                        </div>
+                        <div class="subject-stat completed">
+                            <span class="stat-label">Completed</span>
+                            <span class="stat-value">${subject.assignments.completed}</span>
+                        </div>
+                        <div class="subject-stat pending">
+                            <span class="stat-label">Pending</span>
+                            <span class="stat-value">${subject.assignments.pending}</span>
+                        </div>
+                        <div class="subject-stat due">
+                            <span class="stat-label">Due</span>
+                            <span class="stat-value">${subject.assignments.due}</span>
+                        </div>
                 </div>
                 <div class="chart-view" id="assignment-chart-${idx}" style="display:none; min-width:180px; min-height:120px;"></div>
             </div>
@@ -464,21 +606,30 @@ else{
             </div>
         `;
         subjectsGrid.appendChild(card);
-    });
+        });
+    }
+    
+    // Hide toggle button if no subjects
+    if (subjects.length === 0) {
+        document.getElementById('toggle-all-graphs-btn').style.display = 'none';
+    }
 
     // Toggle all charts/stat views logic
     var chartInstances = {};
     var allGraphsVisible = false;
     function renderPieChartIfNeeded(idx, type) {
+        if (subjects.length === 0 || !subjects[idx]) return;
+        
         var chartId = type + '-chart-' + idx;
         var chartDiv = document.getElementById(chartId);
         if (!chartInstances[chartId]) {
             var data = type === 'assignment' ? subjects[idx].assignments : subjects[idx].notebooks;
+            var hasData = data.total > 0;
             var chartOptions = {
                 chart: { type: 'pie', height: 140 },
-                series: [data.completed, data.pending, data.due],
-                labels: ['Completed', 'Pending', 'Due'],
-                colors: ['#0097A7', '#F9B600', '#A41E22'],
+                series: hasData ? [data.completed, data.pending, data.due] : [1],
+                labels: hasData ? ['Completed', 'Pending', 'Due'] : ['No Data'],
+                colors: hasData ? ['#0097A7', '#F9B600', '#A41E22'] : ['#E0E0E0'],
                 legend: {
                     show: true,
                     fontSize: '13px',
@@ -491,6 +642,11 @@ else{
                 accessibility: {
                     enabled: true,
                     description: (type.charAt(0).toUpperCase() + type.slice(1)) + ' pie chart for ' + subjects[idx].name
+                },
+                noData: {
+                    text: 'No ' + type + 's available',
+                    align: 'center',
+                    verticalAlign: 'middle'
                 }
             };
             chartInstances[chartId] = new ApexCharts(chartDiv, chartOptions);
@@ -498,6 +654,8 @@ else{
         }
     }
     function toggleAllGraphs(showGraphs) {
+        if (subjects.length === 0) return;
+        
         subjects.forEach(function(subject, idx) {
             ['assignment', 'notebook'].forEach(function(type) {
                 var statsId = type + '-stats-' + idx;
