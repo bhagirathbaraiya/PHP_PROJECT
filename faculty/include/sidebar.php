@@ -10,15 +10,15 @@
     <div class="navbar-wrapper">
         <div class="navbar-content scroll-div">
             <!-- Search Bar -->
-            <div style="padding: 18px 18px 8px 18px;">
+            <!-- <div style="padding: 18px 18px 8px 18px;">
                 <input type="text" id="sidebar-search" placeholder="Search..." style="width: 100%; padding: 8px 12px; border-radius: 12px; border: 1px solid #0097A7; background: rgba(255,255,255,0.7); color: #102d4a; font-size: 1rem; outline: none; transition: border 0.2s;" oninput="filterSidebarOptions()">
-            </div>
+            </div> -->
             <ul class="nav pcoded-inner-navbar" id="sidebar-options-list" style="margin-top: 0;">
                 <li class="nav-item">
                     <a href="dashboard.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="my-classes.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">My Classes</span></a>
+                    <a href="my-classes.php" class="nav-link" id="my-classes-link"><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">My Classes</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="userprofile.php" class="nav-link"><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">My Profile</span></a>
@@ -112,24 +112,15 @@ function filterSidebarOptions() {
 }
 </style>
 <script>
-// Sidebar toggle for mobile using header button only
+// Highlight active menu item based on current page
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
-        var sidebar = document.querySelector('.pcoded-navbar');
-        var toggleBtn = document.getElementById('mobile-collapse');
-        if (sidebar && toggleBtn) {
-            toggleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                sidebar.classList.toggle('sidebar-collapsed');
-            });
-            // Optional: Hide sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 991) {
-                    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-                        sidebar.classList.remove('sidebar-collapsed');
-                    }
-                }
-            });
+        var currentPage = window.location.pathname.split('/').pop();
+        var myClassesLink = document.getElementById('my-classes-link');
+        
+        if (currentPage === 'manage-class.php' && myClassesLink) {
+            myClassesLink.classList.add('active');
+            myClassesLink.parentElement.classList.add('active');
         }
     });
 })();
