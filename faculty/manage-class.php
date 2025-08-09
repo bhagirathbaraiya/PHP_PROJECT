@@ -95,7 +95,7 @@ if(strlen($_SESSION['alogin'])==0) {
             width: 20px;
             height: 20px;
             background: white;
-            border: 2px solid #1abc9c;
+            border: 2px solid #0097a7;
             border-radius: 4px;
             cursor: pointer;
             position: relative;
@@ -103,8 +103,8 @@ if(strlen($_SESSION['alogin'])==0) {
         }
 
         input[type="checkbox"]:checked {
-            background: #1abc9c;
-            border-color: #1abc9c;
+            background: #0097a7;
+            border-color: #0097a7;
         }
 
         input[type="checkbox"]:checked::after {
@@ -119,7 +119,7 @@ if(strlen($_SESSION['alogin'])==0) {
         }
 
         input[type="checkbox"]:hover {
-            border-color: #16a085;
+            border-color: #0097a7;
             box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
         }
 
@@ -202,7 +202,7 @@ if(strlen($_SESSION['alogin'])==0) {
                         <hr>
                         <div class="row">
                             <div class="col-12 text-end">
-                                <button class="btn btn-primary" style="background:#1abc9c; border:none; border-radius:12px; padding:10px 20px;">Export Submissions</button>
+                                <button class="btn btn-primary" style="background:#0097a7; border:none; border-radius:12px; padding:10px 20px;">Export Submissions</button>
                             </div>
                         </div>
                     </div>
@@ -293,7 +293,7 @@ function renderPagination() {
     const pagination = document.getElementById('students-pagination');
     pagination.innerHTML = '';
     for (let i = 1; i <= totalPages; i++) {
-        pagination.innerHTML += `<li class="page-item${i === currentPage ? ' active' : ''}"><a class="page-link" href="#">${i}</a></li>`;
+        pagination.innerHTML += `<li  class="page-item${i === currentPage ? ' active' : ''}"><a style="background-color:#0097a7;color:white;" class="page-link" href="#">${i}</a></li>`;
     }
     // Add click event
     Array.from(pagination.querySelectorAll('a')).forEach((a, idx) => {
