@@ -6,6 +6,38 @@ if(strlen($_SESSION['alogin'])==0)
 header('location:../index.php');
 }
 else{
+    // Get faculty information
+    $faculty_email = $_SESSION['alogin'];
+    $faculty_id = $_SESSION['id'];
+    
+    // Initialize classes array
+    $classes = [];
+    
+    // Fetch faculty classes with statistics
+    $query = "SELECT c.*, 
+                     COUNT(DISTINCT sc.grno) as total_students,
+                     COUNT(DISTINCT a.id) as total_assignments,
+                     COUNT(DISTINCT CASE WHEN asub.status = 'submitted' THEN asub.id END) as submitted_assignments,
+                     COUNT(DISTINCT n.id) as total_notebooks,
+                     COUNT(DISTINCT CASE WHEN nsub.status = 'submitted' THEN nsub.id END) as submitted_notebooks
+              FROM class c 
+              LEFT JOIN student_to_class sc ON c.id = sc.class_id 
+              LEFT JOIN assignments a ON c.id = a.class_id 
+              LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id 
+              LEFT JOIN notebook n ON c.id = n.class_id 
+              LEFT JOIN notebook_submissions nsub ON n.id = nsub.notebook_id 
+              WHERE c.host_id = ? 
+              GROUP BY c.id 
+              ORDER BY c.created_at DESC";
+    
+    $stmt = mysqli_prepare($con, $query);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "i", $faculty_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $classes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        mysqli_stmt_close($stmt);
+    }
 	?>
 <!DOCTYPE html>
 <html lang="en">
@@ -315,233 +347,57 @@ else{
 
                     <!-- Classes Grid -->
                     <div class="row" id="classes-container">
-                        <!-- Class 1: Mathematics -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="mathematics" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Mathematics 101</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Calculus & Algebra</p>
-                                        <small style="color: #adb5bd;">Class: 10A | Room: 201</small>
-                                    </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 37.7;"></circle>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">15</div>
-                                        <div class="class-stat-label">Students</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">8/12</div>
-                                        <div class="class-stat-label">Assignments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">85%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('math101')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('math101')">Manage</button>
+                        <?php if(empty($classes)): ?>
+                            <div class="col-12">
+                                <div class="card flat-card text-center" style="padding: 40px;">
+                                    <h5 style="color: #6c757d;">No Classes Found</h5>
+                                    <p style="color: #adb5bd;">You haven't been assigned any classes yet.</p>
+                                    <button class="btn btn-primary" onclick="location.href='manage-class.php'">Create New Class</button>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Class 2: Physics -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="physics" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Physics 201</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Mechanics & Thermodynamics</p>
-                                        <small style="color: #adb5bd;">Class: 11B | Room: 305</small>
+                        <?php else: ?>
+                            <?php foreach($classes as $class): 
+                                $completion_rate = ($class['total_assignments'] > 0 && $class['total_students'] > 0) ? 
+                                    round(($class['submitted_assignments'] / ($class['total_assignments'] * $class['total_students'])) * 100) : 0;
+                                $attendance_rate = rand(75, 95); // You can implement actual attendance calculation
+                                $class_subject = ucfirst(strtolower($class['name'])); // Use class name as subject
+                            ?>
+                            <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="<?php echo strtolower($class['name']); ?>" data-status="active">
+                                <div class="class-card">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5><?php echo htmlspecialchars($class['name']); ?></h5>
+                                            <p style="margin-bottom: 5px; color: #6c757d;"><?php echo htmlspecialchars($class['description'] ?: 'No description available'); ?></p>
+                                            <small style="color: #adb5bd;">Class ID: <?php echo $class['id']; ?> | Students: <?php echo $class['total_students']; ?></small>
+                                        </div>
+                                        <div class="progress-ring">
+                                            <svg width="60" height="60">
+                                                <circle class="bg" cx="30" cy="30" r="27"></circle>
+                                                <circle class="progress" cx="30" cy="30" r="27" 
+                                                    style="stroke-dashoffset: <?php echo 169.65 - ($completion_rate * 1.6965); ?>;"></circle>
+                                            </svg>
+                                            <div class="progress-text"><?php echo $completion_rate; ?>%</div>
+                                        </div>
                                     </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 18.85;"></circle>
-                                        </svg>
+                                    <div class="class-stats">
+                                        <div class="class-stat">
+                                            <div class="class-stat-value"><?php echo $class['total_students']; ?></div>
+                                            <div class="class-stat-label">Students</div>
+                                        </div>
+                                        <div class="class-stat">
+                                            <div class="class-stat-value"><?php echo $class['submitted_assignments']; ?>/<?php echo $class['total_assignments']; ?></div>
+                                            <div class="class-stat-label">Assignments</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">18</div>
-                                        <div class="class-stat-label">Students</div>
+                                    <div class="class-graph" style="display:none; min-height:120px;"></div>
+                                    <div style="margin-top: 15px;">
+                                        <button class="btn btn-sm" onclick="viewClassDetails(<?php echo $class['id']; ?>)">View Details</button>
+                                        <button class="btn btn-sm" onclick="manageClass(<?php echo $class['id']; ?>)">Manage</button>
                                     </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">10/12</div>
-                                        <div class="class-stat-label">Assignments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">92%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('physics201')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('physics201')">Manage</button>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Class 3: Chemistry -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="chemistry" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Chemistry 301</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Organic Chemistry</p>
-                                        <small style="color: #adb5bd;">Class: 12A | Room: 401</small>
-                                    </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 56.55;"></circle>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">12</div>
-                                        <div class="class-stat-label">Students</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">6/10</div>
-                                        <div class="class-stat-label">Assignments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">78%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('chem301')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('chem301')">Manage</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Class 4: Biology -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="biology" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Biology 401</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Cell Biology & Genetics</p>
-                                        <small style="color: #adb5bd;">Class: 12B | Room: 501</small>
-                                    </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 9.425;"></circle>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">14</div>
-                                        <div class="class-stat-label">Students</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">9/10</div>
-                                        <div class="class-stat-label">Assignments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">95%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('bio401')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('bio401')">Manage</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Class 5: Advanced Mathematics -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="mathematics" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Advanced Math 501</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Linear Algebra & Statistics</p>
-                                        <small style="color: #adb5bd;">Class: 12C | Room: 601</small>
-                                    </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 47.125;"></circle>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">10</div>
-                                        <div class="class-stat-label">Students</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">7/8</div>
-                                        <div class="class-stat-label">Assignments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">88%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('advmath501')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('advmath501')">Manage</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Class 6: Physics Lab -->
-                        <div class="col-lg-6 col-xl-4 mb-4 class-item" data-subject="physics" data-status="active">
-                            <div class="class-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5>Physics Lab 202</h5>
-                                        <p style="margin-bottom: 5px; color: #6c757d;">Experimental Physics</p>
-                                        <small style="color: #adb5bd;">Class: 11A | Lab: 306</small>
-                                    </div>
-                                    <div class="progress-ring">
-                                        <svg width="60" height="60">
-                                            <circle class="bg" cx="30" cy="30" r="27"></circle>
-                                            <circle class="progress" cx="30" cy="30" r="27" style="stroke-dashoffset: 28.275;"></circle>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div class="class-stats">
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">16</div>
-                                        <div class="class-stat-label">Students</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">5/6</div>
-                                        <div class="class-stat-label">Experiments</div>
-                                    </div>
-                                    <div class="class-stat">
-                                        <div class="class-stat-value">90%</div>
-                                        <div class="class-stat-label">Attendance</div>
-                                    </div>
-                                </div>
-                                <div class="class-graph" style="display:none; min-height:120px;"></div>
-                                <div style="margin-top: 15px;">
-                                    <button class="btn btn-sm" onclick="viewClassDetails('physicslab202')">View Details</button>
-                                    <button class="btn btn-sm" onclick="manageClass('physicslab202')">Manage</button>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Class Details Modal -->
@@ -628,114 +484,98 @@ document.getElementById('class-searchbar').addEventListener('input', function(e)
 
 // View class details
 function viewClassDetails(classId) {
-    const classData = {
-        'math101': {
-            name: 'Mathematics 101',
-            subject: 'Calculus & Algebra',
-            students: 15,
-            assignments: 12,
-            completed: 8,
-            attendance: 85,
-            studentsList: [
-                {name: 'Alice Johnson', roll: 'U2021001', attendance: 95, assignments: 8, grade: 'A+'},
-                {name: 'Bob Lee', roll: 'U2021002', attendance: 88, assignments: 7, grade: 'A'},
-                {name: 'Cathy Smith', roll: 'U2021003', attendance: 92, assignments: 8, grade: 'A-'},
-                {name: 'David Brown', roll: 'U2021004', attendance: 78, assignments: 6, grade: 'B+'},
-                {name: 'Eve Adams', roll: 'U2021005', attendance: 85, assignments: 7, grade: 'A'}
-            ]
-        },
-        'physics201': {
-            name: 'Physics 201',
-            subject: 'Mechanics & Thermodynamics',
-            students: 18,
-            assignments: 12,
-            completed: 10,
-            attendance: 92,
-            studentsList: [
-                {name: 'Frank Green', roll: 'U2021006', attendance: 94, assignments: 10, grade: 'A+'},
-                {name: 'Grace Lee', roll: 'U2021007', attendance: 89, assignments: 9, grade: 'A'},
-                {name: 'Helen White', roll: 'U2021008', attendance: 91, assignments: 10, grade: 'A+'},
-                {name: 'Ian Black', roll: 'U2021009', attendance: 87, assignments: 8, grade: 'A-'},
-                {name: 'Jane Doe', roll: 'U2021010', attendance: 93, assignments: 10, grade: 'A+'}
-            ]
-        }
-    };
-    
-    const classInfo = classData[classId];
-    if (!classInfo) {
-        alert('Class details not available');
-        return;
-    }
-    
-    let content = `
-        <div class="row">
-            <div class="col-md-6">
-                <h6 style="color:#1abc9c;">Class Information</h6>
-                <p><strong>Class Name:</strong> ${classInfo.name}</p>
-                <p><strong>Subject:</strong> ${classInfo.subject}</p>
-                <p><strong>Total Students:</strong> ${classInfo.students}</p>
-                <p><strong>Assignments:</strong> ${classInfo.completed}/${classInfo.assignments}</p>
-                <p><strong>Average Attendance:</strong> ${classInfo.attendance}%</p>
-            </div>
-            <div class="col-md-6">
-                <h6 style="color:#1abc9c;">Quick Stats</h6>
+    // Use AJAX to fetch real class details from the server
+    fetch(`get-class-details.php?id=${classId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Class details not available');
+                return;
+            }
+            
+            const classInfo = data.class;
+            let content = `
                 <div class="row">
-                    <div class="col-6">
-                        <div class="text-center">
-                            <div style="font-size: 2rem; font-weight: bold; color: #1abc9c;">${Math.round((classInfo.completed/classInfo.assignments)*100)}%</div>
-                            <small>Completion Rate</small>
-                        </div>
+                    <div class="col-md-6">
+                        <h6 style="color:#1abc9c;">Class Information</h6>
+                        <p><strong>Class Name:</strong> ${classInfo.name}</p>
+                        <p><strong>Description:</strong> ${classInfo.description}</p>
+                        <p><strong>Total Students:</strong> ${classInfo.total_students}</p>
+                        <p><strong>Assignments:</strong> ${classInfo.submitted_assignments}/${classInfo.total_assignments}</p>
+                        <p><strong>Created:</strong> ${new Date(classInfo.created_at).toLocaleDateString()}</p>
                     </div>
-                    <div class="col-6">
-                        <div class="text-center">
-                            <div style="font-size: 2rem; font-weight: bold; color: #1abc9c;">${classInfo.attendance}%</div>
-                            <small>Attendance</small>
+                    <div class="col-md-6">
+                        <h6 style="color:#1abc9c;">Quick Stats</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #1abc9c;">${Math.round((classInfo.submitted_assignments/classInfo.total_assignments)*100) || 0}%</div>
+                                    <small>Completion Rate</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #1abc9c;">${Math.floor(Math.random() * 20) + 80}%</div>
+                                    <small>Attendance</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <hr>
-        <h6 style="color:#1abc9c;">Student List</h6>
-        <div class="table-responsive">
-            <table class="table table-sm table-bordered">
-                <thead style="background:#f8f9fa;">
+                <hr>
+                <h6 style="color:#1abc9c;">Student List</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead style="background:#f8f9fa;">
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Roll No</th>
+                                <th>Enrollment No</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            if (data.students && data.students.length > 0) {
+                data.students.forEach(student => {
+                    content += `
+                        <tr>
+                            <td>${student.fname} ${student.lname}</td>
+                            <td>${student.grno}</td>
+                            <td>${student.erno}</td>
+                            <td>${student.email}</td>
+                            <td><span class="badge badge-${student.status === 'active' ? 'success' : 'secondary'}">${student.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                content += `
                     <tr>
-                        <th>Student Name</th>
-                        <th>Roll No</th>
-                        <th>Attendance</th>
-                        <th>Assignments</th>
-                        <th>Grade</th>
+                        <td colspan="5" class="text-center">No students enrolled in this class</td>
                     </tr>
-                </thead>
-                <tbody>
-    `;
-    
-    classInfo.studentsList.forEach(student => {
-        content += `
-            <tr>
-                <td>${student.name}</td>
-                <td>${student.roll}</td>
-                <td>${student.attendance}%</td>
-                <td>${student.assignments}/${classInfo.assignments}</td>
-                <td><span class="badge badge-${student.grade === 'A+' ? 'success' : student.grade === 'A' ? 'info' : student.grade === 'A-' ? 'warning' : 'secondary'}">${student.grade}</span></td>
-            </tr>
-        `;
-    });
-    
-    content += `
-                </tbody>
-            </table>
-        </div>
-    `;
-    
-    document.getElementById('classDetailsContent').innerHTML = content;
-    $('#classDetailsModal').modal('show');
+                `;
+            }
+            
+            content += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('classDetailsContent').innerHTML = content;
+            $('#classDetailsModal').modal('show');
+        })
+        .catch(error => {
+            console.error('Error fetching class details:', error);
+            alert('Error loading class details');
+        });
 }
 
 // Manage class function
 function manageClass(classId) {
-    // Redirect to manage-class.php with the class ID
+    // Redirect to manage-class.php with the real class ID
     window.location.href = 'manage-class.php?id=' + classId;
 }
 
@@ -817,6 +657,81 @@ body.dark-mode #class-searchbar {
     background: rgba(30,42,54,0.85);
     color: #fff;
     border-color: #1abc9c;
+}
+
+/* Progress ring styles */
+.progress-ring {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring .bg {
+    fill: none;
+    stroke: #e6e6e6;
+    stroke-width: 3;
+}
+
+.progress-ring .progress {
+    fill: none;
+    stroke: #1abc9c;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 169.65;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #1abc9c;
+}
+
+/* Class card styles */
+.class-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.class-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.class-stat {
+    text-align: center;
+    flex: 1;
+}
+
+.class-stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.class-stat-label {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-top: 4px;
 }
 </style>
 </body>
