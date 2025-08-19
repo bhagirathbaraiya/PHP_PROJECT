@@ -3,6 +3,7 @@ CREATE TABLE admin (
     fname VARCHAR(255),
     lname VARCHAR(255),
     email VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
     status ENUM('active', 'inactive'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
