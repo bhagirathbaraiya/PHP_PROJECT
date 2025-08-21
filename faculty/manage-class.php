@@ -259,7 +259,11 @@ if ($classId > 0 && $facultyId > 0) {
                                     <p class="muted" style="margin-top:6px; max-width:720px;"><?php echo htmlspecialchars($class['description']); ?></p>
                                 <?php endif; ?>
                             </div>
-                            <div>
+                            <div class="d-flex flex-wrap align-items-center" style="gap:8px;">
+                                <button class="btn btn-soft" data-toggle="modal" data-target="#modalAddStudents">Add Student</button>
+                                <button class="btn btn-soft" data-toggle="modal" data-target="#modalRemoveStudents">Remove Student</button>
+                                <button class="btn btn-soft" data-toggle="modal" data-target="#modalAssignments">Add Assignment</button>
+                                <button class="btn btn-soft" data-toggle="modal" data-target="#modalNotebooks">Add Notebook</button>
                                 <a href="my-classes.php" class="btn btn-soft">Back to My Classes</a>
                             </div>
                         </div>
@@ -385,6 +389,192 @@ if ($classId > 0 && $facultyId > 0) {
     </div>
 </div>
 
+<!-- Add Students Modal -->
+<div class="modal fade" id="modalAddStudents" tabindex="-1" role="dialog" aria-labelledby="addStudentsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentsLabel">Add Students</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="formAddStudents">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="add-grnos">Enter GRNOs</label>
+                        <textarea id="add-grnos" name="grnos" class="form-control" rows="4" placeholder="Enter GRNOs separated by comma, space, or new line"></textarea>
+                        <small class="form-text text-muted">Only existing students will be enrolled.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-soft">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Students Modal -->
+<div class="modal fade" id="modalRemoveStudents" tabindex="-1" role="dialog" aria-labelledby="removeStudentsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeStudentsLabel">Remove Students</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="formRemoveStudents">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="remove-grnos">Enter GRNOs to remove</label>
+                        <textarea id="remove-grnos" name="grnos" class="form-control" rows="4" placeholder="Enter GRNOs separated by comma, space, or new line"></textarea>
+                        <small class="form-text text-muted">Students will be unenrolled from this class only.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Assignments Modal (Add + Manage) -->
+<div class="modal fade" id="modalAssignments" tabindex="-1" role="dialog" aria-labelledby="assignmentsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignmentsLabel">Assignments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAddAssignment" class="mb-3">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="as-name">Name</label>
+                            <input type="text" id="as-name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="as-desc">Description</label>
+                            <input type="text" id="as-desc" name="description" class="form-control">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="as-due">Due Date</label>
+                            <input type="date" id="as-due" name="due_date" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-soft">Add Assignment</button>
+                </form>
+                <hr>
+                <h6 class="mb-2">Existing Assignments</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead style="background:#f8f9fa;">
+                            <tr>
+                                <th style="width:60px;">ID</th>
+                                <th>Name</th>
+                                <th>Due</th>
+                                <th style="width:140px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assignmentsList">
+                            <?php foreach ($assignments as $a): ?>
+                                <tr data-id="<?php echo (int)$a['id']; ?>">
+                                    <td><?php echo (int)$a['id']; ?></td>
+                                    <td class="a-name"><?php echo htmlspecialchars($a['name']); ?></td>
+                                    <td class="a-due"><?php echo htmlspecialchars(isset($a['due_date']) ? $a['due_date'] : ''); ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-soft btn-edit-assignment">Edit</button>
+                                        <button class="btn btn-sm btn-danger btn-delete-assignment">Delete</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($assignments)): ?>
+                                <tr><td colspan="4" class="text-center muted">No assignments yet.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Assignment Modal -->
+<div class="modal fade" id="modalEditAssignment" tabindex="-1" role="dialog" aria-labelledby="editAssignmentLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAssignmentLabel">Edit Assignment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="formEditAssignment">
+                <div class="modal-body">
+                    <input type="hidden" id="edit-as-id" name="id">
+                    <div class="form-group">
+                        <label for="edit-as-name">Name</label>
+                        <input type="text" id="edit-as-name" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-as-desc">Description</label>
+                        <input type="text" id="edit-as-desc" name="description" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-as-due">Due Date</label>
+                        <input type="date" id="edit-as-due" name="due_date" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-soft">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Notebooks Modal (Add + Manage) -->
+<div class="modal fade" id="modalNotebooks" tabindex="-1" role="dialog" aria-labelledby="notebooksLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notebooksLabel">Notebooks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    <button id="btnAddNotebook" class="btn btn-soft">Add Notebook</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead style="background:#f8f9fa;">
+                            <tr>
+                                <th style="width:60px;">ID</th>
+                                <th>Created</th>
+                                <th style="width:120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notebooksList">
+                            <?php foreach ($notebooks as $n): ?>
+                                <tr data-id="<?php echo (int)$n['id']; ?>">
+                                    <td><?php echo (int)$n['id']; ?></td>
+                                    <td><?php echo htmlspecialchars(isset($n['created_at']) ? $n['created_at'] : ''); ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger btn-delete-notebook">Delete</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($notebooks)): ?>
+                                <tr><td colspan="3" class="text-center muted">No notebooks yet.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 (function(){
     var searchInput = document.getElementById('studentSearch');
@@ -484,6 +674,160 @@ if ($classId > 0 && $facultyId > 0) {
     if (searchInput) searchInput.addEventListener('input', filterRows);
     if (rows.length) paginate();
 })();
+// === CRUD Handlers for Students, Assignments, Notebooks ===
+var CLASS_ID = <?php echo (int)$classId; ?>;
+
+function parseGrnos(text) {
+    if (!text) return [];
+    return text.split(/[\s,]+/).map(function(x){ return x.trim(); }).filter(function(x){ return x.length; });
+}
+
+// Add students
+var formAddStudents = document.getElementById('formAddStudents');
+if (formAddStudents) {
+    formAddStudents.addEventListener('submit', function(e){
+        e.preventDefault();
+        var grnos = parseGrnos(document.getElementById('add-grnos').value);
+        if (!grnos.length) { alert('Enter at least one GRNO'); return; }
+        fetch('api/class-students.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'add', class_id: CLASS_ID, grnos: grnos })
+        }).then(function(r){ return r.json(); }).then(function(res){
+            if (!res.success) { alert('Error: ' + (res.message || 'Unable to add')); return; }
+            var msg = 'Added: ' + (res.added_count||0);
+            if (res.already_enrolled && res.already_enrolled.length) msg += '\\nAlready enrolled: ' + res.already_enrolled.join(', ');
+            if (res.not_found && res.not_found.length) msg += '\\nNot found: ' + res.not_found.join(', ');
+            alert(msg);
+            location.reload();
+        }).catch(function(err){ alert('Network error'); console.error(err); });
+    });
+}
+
+// Remove students
+var formRemoveStudents = document.getElementById('formRemoveStudents');
+if (formRemoveStudents) {
+    formRemoveStudents.addEventListener('submit', function(e){
+        e.preventDefault();
+        var grnos = parseGrnos(document.getElementById('remove-grnos').value);
+        if (!grnos.length) { alert('Enter at least one GRNO'); return; }
+        if (!confirm('Remove selected students from this class?')) return;
+        fetch('api/class-students.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'remove', class_id: CLASS_ID, grnos: grnos })
+        }).then(function(r){ return r.json(); }).then(function(res){
+            if (!res.success) { alert('Error: ' + (res.message || 'Unable to remove')); return; }
+            var msg = 'Removed: ' + (res.removed_count||0);
+            if (res.not_in_class && res.not_in_class.length) msg += '\\nNot in class: ' + res.not_in_class.join(', ');
+            alert(msg);
+            location.reload();
+        }).catch(function(err){ alert('Network error'); console.error(err); });
+    });
+}
+
+// Add assignment
+var formAddAssignment = document.getElementById('formAddAssignment');
+if (formAddAssignment) {
+    formAddAssignment.addEventListener('submit', function(e){
+        e.preventDefault();
+        var payload = {
+            action: 'create',
+            class_id: CLASS_ID,
+            name: document.getElementById('as-name').value.trim(),
+            description: document.getElementById('as-desc').value.trim(),
+            due_date: document.getElementById('as-due').value
+        };
+        if (!payload.name || !payload.due_date) { alert('Name and due date are required'); return; }
+        fetch('api/assignments.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+        .then(function(r){ return r.json(); }).then(function(res){
+            if (!res.success) { alert('Error: ' + (res.message||'Unable to add assignment')); return; }
+            alert('Assignment added');
+            location.reload();
+        }).catch(function(err){ alert('Network error'); console.error(err); });
+    });
+}
+
+// Edit assignment open
+document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-edit-assignment');
+    if (!btn) return;
+    var tr = btn.closest('tr');
+    var id = tr.getAttribute('data-id');
+    var name = tr.querySelector('.a-name').textContent.trim();
+    var due = tr.querySelector('.a-due').textContent.trim();
+    document.getElementById('edit-as-id').value = id;
+    document.getElementById('edit-as-name').value = name;
+    document.getElementById('edit-as-desc').value = '';
+    document.getElementById('edit-as-due').value = due || '';
+    if (window.jQuery) { jQuery('#modalEditAssignment').modal('show'); }
+});
+
+// Save edit assignment
+var formEditAssignment = document.getElementById('formEditAssignment');
+if (formEditAssignment) {
+    formEditAssignment.addEventListener('submit', function(e){
+        e.preventDefault();
+        var payload = {
+            action: 'update',
+            id: parseInt(document.getElementById('edit-as-id').value, 10),
+            class_id: CLASS_ID,
+            name: document.getElementById('edit-as-name').value.trim(),
+            description: document.getElementById('edit-as-desc').value.trim(),
+            due_date: document.getElementById('edit-as-due').value
+        };
+        fetch('api/assignments.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+        .then(function(r){ return r.json(); }).then(function(res){
+            if (!res.success) { alert('Error: ' + (res.message||'Unable to update assignment')); return; }
+            alert('Assignment updated');
+            location.reload();
+        }).catch(function(err){ alert('Network error'); console.error(err); });
+    });
+}
+
+// Delete assignment
+document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-delete-assignment');
+    if (!btn) return;
+    var tr = btn.closest('tr');
+    var id = parseInt(tr.getAttribute('data-id'), 10);
+    if (!confirm('Delete this assignment? This cannot be undone.')) return;
+    fetch('api/assignments.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'delete', id:id, class_id: CLASS_ID }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+        if (!res.success) { alert('Error: ' + (res.message||'Unable to delete assignment')); return; }
+        alert('Assignment deleted');
+        location.reload();
+    }).catch(function(err){ alert('Network error'); console.error(err); });
+});
+
+// Add notebook
+var btnAddNotebook = document.getElementById('btnAddNotebook');
+if (btnAddNotebook) {
+    btnAddNotebook.addEventListener('click', function(){
+        fetch('api/notebooks.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create', class_id: CLASS_ID }) })
+        .then(function(r){ return r.json(); }).then(function(res){
+            if (!res.success) { alert('Error: ' + (res.message||'Unable to add notebook')); return; }
+            alert('Notebook added');
+            location.reload();
+        }).catch(function(err){ alert('Network error'); console.error(err); });
+    });
+}
+
+// Delete notebook
+document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-delete-notebook');
+    if (!btn) return;
+    var tr = btn.closest('tr');
+    var id = parseInt(tr.getAttribute('data-id'), 10);
+    if (!confirm('Delete this notebook? This cannot be undone.')) return;
+    fetch('api/notebooks.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'delete', id:id, class_id: CLASS_ID }) })
+    .then(function(r){ return r.json(); }).then(function(res){
+        if (!res.success) { alert('Error: ' + (res.message||'Unable to delete notebook')); return; }
+        alert('Notebook deleted');
+        location.reload();
+    }).catch(function(err){ alert('Network error'); console.error(err); });
+});
+
 </script>
 <script src="assets/js/vendor-all.min.js"></script>
 <script src="assets/js/plugins/bootstrap.min.js"></script>
