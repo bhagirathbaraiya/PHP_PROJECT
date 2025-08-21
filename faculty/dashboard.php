@@ -243,7 +243,7 @@ if ($stmt = mysqli_prepare($con, "SELECT a.id, a.name AS assignment_name, c.name
                         </div>
                     </div>
 
-                    <div class="row g-3 mb-3">
+                    <!-- <div class="row g-3 mb-3">
                         <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                             <div class="card flat-card bg-danger">
                                 <div class="row-table">
@@ -255,7 +255,7 @@ if ($stmt = mysqli_prepare($con, "SELECT a.id, a.name AS assignment_name, c.name
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="row g-3 mb-3">
                         <div class="col-12 col-md-6 col-xl-4">

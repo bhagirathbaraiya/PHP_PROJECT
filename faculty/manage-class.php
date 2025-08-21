@@ -1,9 +1,119 @@
-<?php 
+<?php
 session_start();
 include('include/config.php');
 if(strlen($_SESSION['alogin'])==0) {
     header('location:../index.php');
     exit();
+}
+
+// Validate class id
+$classId = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : 0;
+$facultyId = isset($_SESSION['id']) ? intval($_SESSION['id']) : 0;
+
+$class = null;
+$students = [];
+$totals = [
+    'students' => 0,
+    'assignments' => 0,
+    'assignments_submitted' => 0,
+    'notebooks' => 0,
+    'notebooks_submitted' => 0,
+];
+
+if ($classId > 0 && $facultyId > 0) {
+    // Verify ownership and fetch class with stats
+    $query = "SELECT c.*, 
+                     COUNT(DISTINCT sc.grno) AS total_students,
+                     COUNT(DISTINCT a.id) AS total_assignments,
+                     COUNT(DISTINCT CASE WHEN asub.status = 'submitted' THEN asub.id END) AS submitted_assignments,
+                     COUNT(DISTINCT n.id) AS total_notebooks,
+                     COUNT(DISTINCT CASE WHEN nsub.status = 'submitted' THEN nsub.id END) AS submitted_notebooks
+              FROM class c
+              LEFT JOIN student_to_class sc ON c.id = sc.class_id
+              LEFT JOIN assignments a ON c.id = a.class_id
+              LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id
+              LEFT JOIN notebook n ON c.id = n.class_id
+              LEFT JOIN notebook_submissions nsub ON n.id = nsub.notebook_id
+              WHERE c.id = ? AND c.host_id = ?
+              GROUP BY c.id";
+
+    if ($stmt = mysqli_prepare($con, $query)) {
+        mysqli_stmt_bind_param($stmt, 'ii', $classId, $facultyId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $class = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($stmt);
+    }
+
+    if ($class) {
+        $totals['students'] = (int)$class['total_students'];
+        $totals['assignments'] = (int)$class['total_assignments'];
+        $totals['assignments_submitted'] = (int)$class['submitted_assignments'];
+        $totals['notebooks'] = (int)$class['total_notebooks'];
+        $totals['notebooks_submitted'] = (int)$class['submitted_notebooks'];
+
+        // Fetch students enrolled in the class
+        $studentsQuery = "SELECT s.grno, s.erno, s.fname, s.lname, s.email, s.status
+                          FROM students s
+                          INNER JOIN student_to_class sc ON s.grno = sc.grno
+                          WHERE sc.class_id = ?
+                          ORDER BY s.fname, s.lname";
+        if ($sstmt = mysqli_prepare($con, $studentsQuery)) {
+            mysqli_stmt_bind_param($sstmt, 'i', $classId);
+            mysqli_stmt_execute($sstmt);
+            $sres = mysqli_stmt_get_result($sstmt);
+            $students = mysqli_fetch_all($sres, MYSQLI_ASSOC);
+            mysqli_stmt_close($sstmt);
+        }
+
+        // Total assignments and notebooks for per-student denominators
+        $totalAssignments = $totals['assignments'];
+        $totalNotebooks = $totals['notebooks'];
+
+        // Fetch per-student assignment submissions (distinct assignments submitted)
+        $asMap = [];
+        $asQuery = "SELECT asub.grno, COUNT(DISTINCT asub.assignment_id) AS cnt
+                    FROM assignments a
+                    INNER JOIN assignment_submissions asub ON asub.assignment_id = a.id AND asub.status = 'submitted'
+                    WHERE a.class_id = ?
+                    GROUP BY asub.grno";
+        if ($astmt = mysqli_prepare($con, $asQuery)) {
+            mysqli_stmt_bind_param($astmt, 'i', $classId);
+            mysqli_stmt_execute($astmt);
+            $ares = mysqli_stmt_get_result($astmt);
+            while ($row = mysqli_fetch_assoc($ares)) {
+                $asMap[$row['grno']] = (int)$row['cnt'];
+            }
+            mysqli_stmt_close($astmt);
+        }
+
+        // Fetch per-student notebook submissions (distinct notebooks submitted)
+        $nsMap = [];
+        $nsQuery = "SELECT nsub.grno, COUNT(DISTINCT nsub.notebook_id) AS cnt
+                    FROM notebook n
+                    INNER JOIN notebook_submissions nsub ON nsub.notebook_id = n.id AND nsub.status = 'submitted'
+                    WHERE n.class_id = ?
+                    GROUP BY nsub.grno";
+        if ($nsstmt = mysqli_prepare($con, $nsQuery)) {
+            mysqli_stmt_bind_param($nsstmt, 'i', $classId);
+            mysqli_stmt_execute($nsstmt);
+            $nsres = mysqli_stmt_get_result($nsstmt);
+            while ($row = mysqli_fetch_assoc($nsres)) {
+                $nsMap[$row['grno']] = (int)$row['cnt'];
+            }
+            mysqli_stmt_close($nsstmt);
+        }
+
+        // Enrich students with progress
+        foreach ($students as &$stu) {
+            $grno = $stu['grno'];
+            $stu['assignments_submitted'] = isset($asMap[$grno]) ? $asMap[$grno] : 0;
+            $stu['notebooks_submitted'] = isset($nsMap[$grno]) ? $nsMap[$grno] : 0;
+            $stu['total_assignments'] = $totalAssignments;
+            $stu['total_notebooks'] = $totalNotebooks;
+        }
+        unset($stu);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -21,118 +131,30 @@ if(strlen($_SESSION['alogin'])==0) {
             color: #102d4a;
             font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .pcoded-main-container {
-            padding-top: 20px;
-        }
-        @media (max-width: 991px) {
-            .pcoded-main-container {
-                padding-top: 10px;
-            }
-        }
-        .stat-box {
-            background: rgba(255,255,255,0.18);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            border: 1.5px solid #e3e8ee;
-            min-width: 120px;
-            margin: 0 8px;
-            padding: 12px 8px;
-            display: inline-block;
-        }
-        .stat-title {
-            color: #0097A7;
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 2px;
-        }
-        .stat-value {
-            font-size: 1.7rem;
-            font-weight: 700;
-            color: #1abc9c;
-        }
-        .sortable {
-            cursor: pointer;
-            user-select: none;
-        }
-        .sortable:hover {
-            background-color: #f0f0f0;
-        }
-        .sort-icon {
-            display: inline-block;
-            margin-left: 5px;
-            color: #666;
-        }
-        #searchInput {
-            border: 1px solid #e3e8ee;
-            padding: 8px 12px;
-            transition: all 0.3s ease;
-        }
-        #searchInput:focus {
-            border-color: #0097A7;
-            box-shadow: 0 0 0 0.2rem rgba(0, 151, 167, 0.25);
-            outline: none;
-        }
-        @media (max-width: 991px) {
-            .stat-box { min-width: 90px; font-size: 0.95em; }
-            .stat-title { font-size: 0.95em; }
-            .stat-value { font-size: 1.2rem; }
-            .table-responsive { font-size: 0.95em; }
-            .d-flex.gap-2 { gap: 6px !important; }
-        }
-        @media (max-width: 600px) {
-            .stat-box { min-width: 70px; font-size: 0.9em; padding: 8px 4px; }
-            .stat-title { font-size: 0.9em; }
-            .stat-value { font-size: 1rem; }
-            .table-responsive { font-size: 0.9em; }
-            .d-flex.gap-2 { gap: 4px !important; }
-            img.rounded-circle { width: 32px !important; height: 32px !important; }
-        }
+        .pcoded-main-container { padding-top: 20px; }
+        @media (max-width: 991px) { .pcoded-main-container { padding-top: 10px; } }
 
-        /* Custom checkbox styling */
-        input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border: 2px solid #0097a7;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-        }
+        .mini-stat { background:#fff; border:1px solid #e3e8ee; border-radius:14px; padding:14px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+        .mini-stat .label { color:#6c757d; font-weight:600; font-size:0.95rem; }
+        .mini-stat .value { color:#0097A7; font-weight:700; font-size:1.6rem; }
 
-        input[type="checkbox"]:checked {
-            background: #0097a7;
-            border-color: #0097a7;
-        }
+        .class-header h4 { color:#1abc9c; font-weight:600; margin-bottom:4px; }
+        .class-sub { color:#666; margin-bottom:0; }
 
-        input[type="checkbox"]:checked::after {
-            content: '✓';
-            position: absolute;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
+        .search-wrap input { border:1px solid #e3e8ee; padding:10px 12px; border-radius:10px; }
+        .search-wrap input:focus { border-color:#0097A7; box-shadow:0 0 0 0.2rem rgba(0,151,167,0.18); outline:none; }
 
-        input[type="checkbox"]:hover {
-            border-color: #0097a7;
-            box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
-        }
-
-        #selectAllNotebooks,
-        #selectAllAssignments {
-            margin-right: 8px;
-        }
-
-        .notebook-checkbox,
-        .assignment-checkbox {
-            margin: 0 auto;
-            display: block;
-        }
+        .student-card { background:#fff; border:1px solid #e3e8ee; border-radius:14px; padding:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); height:100%; }
+        .student-name { font-weight:600; color:#102d4a; margin-bottom:2px; }
+        .student-meta { color:#6c757d; font-size:0.92rem; margin-bottom:8px; }
+        .chip { display:inline-block; background:#f1f5f9; color:#0f172a; border-radius:999px; padding:4px 10px; font-size:0.82rem; margin-right:6px; }
+        .status-badge { font-size:0.78rem; padding:4px 8px; border-radius:8px; }
+        .status-active { background:#e8f5e9; color:#1b5e20; }
+        .status-inactive { background:#eceff1; color:#263238; }
+        .avatar { width:44px; height:44px; border-radius:50%; border:2px solid #e3e8ee; object-fit:cover; }
+        .muted { color:#94a3b8; font-size:0.85rem; }
+        .btn-soft { background:#0097A7; color:#fff; border:none; border-radius:10px; padding:8px 14px; }
+        .btn-soft:hover { background:#0e7c86; }
     </style>
 </head>
 <body class="">
@@ -144,236 +166,97 @@ if(strlen($_SESSION['alogin'])==0) {
             <div class="col-12">
                 <div class="card flat-card">
                     <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <?php if (!$class): ?>
+                            <div class="text-center">
+                                <h5 style="color:#6c757d;">Class not found or access denied</h5>
+                                <p class="muted">Make sure you opened a class you own.</p>
+                                <a href="my-classes.php" class="btn btn-soft">Back to My Classes</a>
+                            </div>
+                        <?php else: ?>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 class-header">
                             <div>
-                                <h4 style="color:#1abc9c; font-weight:600; margin-bottom: 4px;">Manage Class</h4>
-                                <p style="color:#666; margin-bottom: 0;">Course: <span style="color:#0097A7;font-weight:600;">Physics 201</span> &nbsp; | &nbsp; Division: <span style="color:#A41E22;font-weight:600;">A</span></p>
+                                <h4>Manage Class: <?php echo htmlspecialchars($class['name']); ?></h4>
+                                <p class="class-sub">Class ID: <span style="color:#0097A7; font-weight:600;">#<?php echo (int)$class['id']; ?></span></p>
+                                <?php if (!empty($class['description'])): ?>
+                                    <p class="muted" style="margin-top:6px; max-width:720px;"><?php echo htmlspecialchars($class['description']); ?></p>
+                                <?php endif; ?>
                             </div>
-                            <div class="d-flex flex-wrap gap-3 stats-container">
-                                <div class="stat-box text-center">
-                                    <div class="stat-title">Total Students</div>
-                                    <div class="stat-value" id="total-students">25</div>
-                                </div>
-                                <div class="stat-box text-center">
-                                    <div class="stat-title">Notebook Submitted</div>
-                                    <div class="stat-value" id="notebook-submitted">20</div>
-                                </div>
-                                <div class="stat-box text-center">
-                                    <div class="stat-title">Assignments Submitted</div>
-                                    <div class="stat-value" id="assignment-submitted">18</div>
-                                </div>
-                                <div class="stat-box text-center">
-                                    <div class="stat-title">Pending Assignments</div>
-                                    <div class="stat-value" id="pending-assignments">7</div>
-                                </div>
+                            <div>
+                                <a href="my-classes.php" class="btn btn-soft">Back to My Classes</a>
                             </div>
                         </div>
-                        <hr>
-                        <div class="row mb-3">
+
+                        <div class="row g-2" style="margin-bottom:12px;">
+                            <div class="col-6 col-md-3 mb-3"><div class="mini-stat"><div class="label">Total Students</div><div class="value"><?php echo $totals['students']; ?></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="mini-stat"><div class="label">Assignments Submitted</div><div class="value"><?php echo $totals['assignments_submitted']; ?>/<?php echo $totals['assignments']; ?></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="mini-stat"><div class="label">Notebooks Submitted</div><div class="value"><?php echo $totals['notebooks_submitted']; ?>/<?php echo $totals['notebooks']; ?></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="mini-stat"><div class="label">Pending Assignments</div><div class="value"><?php echo max(0, ($totals['assignments'] * max(1,$totals['students'])) - $totals['assignments_submitted']); ?></div></div></div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-12 col-md-6"><h5 style="color:#0097A7; margin-bottom:8px;">Students</h5></div>
                             <div class="col-12 col-md-6">
-                                <h5 style="color:#0097A7;">Student List</h5>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Search students..." style="border-radius:8px;">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-sm" id="students-table">
-                                        <thead style="background:#f8f9fa;">
-                                            <tr>
-                                                <th>Sr No</th>
-                                                <th class="sortable" data-sort="name">Student <span class="sort-icon">↕</span></th>
-                                                <th class="sortable" data-sort="notebook">Notebook Status <span class="sort-icon">↕</span></th>
-                                                <th><input type="checkbox" id="selectAllNotebooks"></th>
-                                                <th class="sortable" data-sort="assignment">Assignment Status <span class="sort-icon">↕</span></th>
-                                                <th><input type="checkbox" id="selectAllAssignments"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
+                                <div class="search-wrap">
+                                    <input type="text" id="studentSearch" class="form-control" placeholder="Search students by name, email, GR/ER number">
                                 </div>
-                                <nav>
-                                    <ul class="pagination justify-content-center" id="students-pagination"></ul>
-                                </nav>
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-12 text-end">
-                                <button class="btn btn-primary" style="background:#0097a7; border:none; border-radius:12px; padding:10px 20px;">Export Submissions</button>
-                            </div>
+
+                        <div class="row" id="studentsGrid">
+                            <?php if (empty($students)): ?>
+                                <div class="col-12">
+                                    <div class="text-center muted" style="padding:24px;">No students enrolled yet.</div>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($students as $idx => $s): ?>
+                                    <div class="col-lg-6 col-xl-4 mb-3 student-item" 
+                                         data-name="<?php echo strtolower(htmlspecialchars($s['fname'].' '.$s['lname'])); ?>"
+                                         data-email="<?php echo strtolower(htmlspecialchars($s['email'])); ?>"
+                                         data-grno="<?php echo htmlspecialchars($s['grno']); ?>"
+                                         data-erno="<?php echo htmlspecialchars($s['erno']); ?>">
+                                        <div class="student-card">
+                                            <div class="d-flex align-items-center">
+                                                <img src="assets/images/user/user.png" class="avatar" alt="avatar">
+                                                <div style="margin-left:10px;">
+                                                    <div class="student-name"><?php echo htmlspecialchars($s['fname'].' '.$s['lname']); ?></div>
+                                                    <div class="student-meta">GR: <?php echo htmlspecialchars($s['grno']); ?> &nbsp; • &nbsp; ER: <?php echo htmlspecialchars($s['erno']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="student-meta" style="margin-top:6px;">
+                                                <?php echo htmlspecialchars($s['email']); ?>
+                                            </div>
+                                            <div style="margin-top:6px;">
+                                                <span class="chip">Assignments: <?php echo (int)$s['assignments_submitted']; ?>/<?php echo (int)$s['total_assignments']; ?></span>
+                                                <span class="chip">Notebooks: <?php echo (int)$s['notebooks_submitted']; ?>/<?php echo (int)$s['total_notebooks']; ?></span>
+                                                <span class="status-badge <?php echo ($s['status']==='active'?'status-active':'status-inactive'); ?>"><?php echo htmlspecialchars($s['status']); ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-// Example student data (replace with PHP from DB)
-// Add event listeners for select all checkboxes
-document.getElementById('selectAllNotebooks').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.notebook-checkbox');
-    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-});
-
-document.getElementById('selectAllAssignments').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.assignment-checkbox');
-    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-});
-
-const students = [
-    {name: 'Alice Johnson', email: 'alice.johnson@example.com', roll: 'U2021001', image: 'https://randomuser.me/api/portraits/women/1.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Bob Lee', email: 'bob.lee@example.com', roll: 'U2021002', image: 'https://randomuser.me/api/portraits/men/2.jpg', notebook: 'Pending', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 8, totalNotebooks: 5, notebooksSubmitted: 4},
-    {name: 'Cathy Smith', email: 'cathy.smith@example.com', roll: 'U2021003', image: 'https://randomuser.me/api/portraits/women/3.jpg', notebook: 'Submitted', assignment: 'Pending', totalAssignments: 10, assignmentsSubmitted: 7, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'David Brown', email: 'david.brown@example.com', roll: 'U2021004', image: 'https://randomuser.me/api/portraits/men/4.jpg', notebook: 'Submitted', assignment: 'Overdue', totalAssignments: 10, assignmentsSubmitted: 6, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Eve Adams', email: 'eve.adams@example.com', roll: 'U2021005', image: 'https://randomuser.me/api/portraits/women/5.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Frank Green', email: 'frank.green@example.com', roll: 'U2021006', image: 'https://randomuser.me/api/portraits/men/6.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Grace Lee', email: 'grace.lee@example.com', roll: 'U2021007', image: 'https://randomuser.me/api/portraits/women/7.jpg', notebook: 'Pending', assignment: 'Pending', totalAssignments: 10, assignmentsSubmitted: 5, totalNotebooks: 5, notebooksSubmitted: 3},
-    {name: 'Helen White', email: 'helen.white@example.com', roll: 'U2021008', image: 'https://randomuser.me/api/portraits/women/8.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Ian Black', email: 'ian.black@example.com', roll: 'U2021009', image: 'https://randomuser.me/api/portraits/men/9.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Jane Doe', email: 'jane.doe@example.com', roll: 'U2021010', image: 'https://randomuser.me/api/portraits/women/10.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Kevin Smith', email: 'kevin.smith@example.com', roll: 'U2021011', image: 'https://randomuser.me/api/portraits/men/11.jpg', notebook: 'Pending', assignment: 'Pending', totalAssignments: 10, assignmentsSubmitted: 4, totalNotebooks: 5, notebooksSubmitted: 2},
-    {name: 'Linda Brown', email: 'linda.brown@example.com', roll: 'U2021012', image: 'https://randomuser.me/api/portraits/women/12.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Mike Lee', email: 'mike.lee@example.com', roll: 'U2021013', image: 'https://randomuser.me/api/portraits/men/13.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Nina White', email: 'nina.white@example.com', roll: 'U2021014', image: 'https://randomuser.me/api/portraits/women/14.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Oscar Black', email: 'oscar.black@example.com', roll: 'U2021015', image: 'https://randomuser.me/api/portraits/men/15.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Paul Doe', email: 'paul.doe@example.com', roll: 'U2021016', image: 'https://randomuser.me/api/portraits/men/16.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Vera Doe', email: 'vera.doe@example.com', roll: 'U2021022', image: 'https://randomuser.me/api/portraits/women/17.jpg', notebook: 'Pending', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 9, totalNotebooks: 5, notebooksSubmitted: 4},
-    {name: 'Will Smith', email: 'will.smith@example.com', roll: 'U2021023', image: 'https://randomuser.me/api/portraits/men/18.jpg', notebook: 'Submitted', assignment: 'Pending', totalAssignments: 10, assignmentsSubmitted: 7, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Xena Brown', email: 'xena.brown@example.com', roll: 'U2021024', image: 'https://randomuser.me/api/portraits/women/19.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5},
-    {name: 'Yuri Lee', email: 'yuri.lee@example.com', roll: 'U2021025', image: 'https://randomuser.me/api/portraits/men/20.jpg', notebook: 'Submitted', assignment: 'Submitted', totalAssignments: 10, assignmentsSubmitted: 10, totalNotebooks: 5, notebooksSubmitted: 5}
-];
-
-const rowsPerPage = 10;
-let currentPage = 1;
-let filteredStudents = [...students];
-
-function renderTable(page) {
-    const tbody = document.querySelector('#students-table tbody');
-    tbody.innerHTML = '';
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const pageStudents = filteredStudents.slice(start, end);
-    pageStudents.forEach((student, idx) => {
-        tbody.innerHTML += `
-            <tr>
-                <td style="vertical-align:middle;">${start + idx + 1}</td>
-                <td style="vertical-align:middle;">
-                    <div class="d-flex align-items-center gap-2">
-                        <img src="${student.image}" alt="${student.name}" class="rounded-circle" style="width:44px;height:44px;object-fit:cover;border:2px solid #e3e8ee;">
-                        <div>
-                            <span style="font-weight:600;color:#102d4a;">${student.name}</span><br>
-                            <span style="font-size:0.95em;color:#666;">${student.email}</span><br>
-                            <span style="font-size:0.9em;color:#A41E22;">${student.roll}</span>
-                        </div>
-                    </div>
-                </td>
-                <td style="vertical-align:middle;">
-                    <span class="badge badge-${student.notebook === 'Submitted' ? 'success' : student.notebook === 'Pending' ? 'warning' : 'secondary'}">${student.notebooksSubmitted}/${student.totalNotebooks} ${student.notebook}</span>
-                </td>
-                <td style="vertical-align:middle;">
-                    <input type="checkbox" class="notebook-checkbox" id="notebook-${student.roll}" ${student.notebook === 'Submitted' ? 'checked' : ''}>
-                </td>
-                <td style="vertical-align:middle;">
-                    <span class="badge badge-${student.assignment === 'Submitted' ? 'success' : student.assignment === 'Pending' ? 'warning' : student.assignment === 'Overdue' ? 'danger' : 'secondary'}">${student.assignmentsSubmitted}/${student.totalAssignments} ${student.assignment}</span>
-                </td>
-                <td style="vertical-align:middle;">
-                    <input type="checkbox" class="assignment-checkbox" id="assignment-${student.roll}" ${student.assignment === 'Submitted' ? 'checked' : ''}>
-                </td>
-            </tr>
-        `;
-    });
-}
-
-function renderPagination() {
-    const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
-    const pagination = document.getElementById('students-pagination');
-    pagination.innerHTML = '';
-    for (let i = 1; i <= totalPages; i++) {
-        pagination.innerHTML += `<li  class="page-item${i === currentPage ? ' active' : ''}"><a style="background-color:#0097a7;color:white;" class="page-link" href="#">${i}</a></li>`;
+(function(){
+    var searchInput = document.getElementById('studentSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e){
+            var q = (e.target.value || '').toLowerCase();
+            var items = document.querySelectorAll('.student-item');
+            Array.prototype.forEach.call(items, function(el){
+                var hay = (el.getAttribute('data-name') + ' ' + el.getAttribute('data-email') + ' ' + el.getAttribute('data-grno') + ' ' + el.getAttribute('data-erno')).toLowerCase();
+                el.style.display = hay.indexOf(q) !== -1 ? 'block' : 'none';
+            });
+        });
     }
-    // Add click event
-    Array.from(pagination.querySelectorAll('a')).forEach((a, idx) => {
-        a.addEventListener('click', function(e) {
-            e.preventDefault();
-            currentPage = idx + 1;
-            renderTable(currentPage);
-            renderPagination();
-        });
-    });
-}
-
-// Search functionality
-const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    filteredStudents = students.filter(student => 
-        student.name.toLowerCase().includes(searchTerm) ||
-        student.email.toLowerCase().includes(searchTerm) ||
-        student.roll.toLowerCase().includes(searchTerm)
-    );
-    currentPage = 1;
-    renderTable(currentPage);
-    renderPagination();
-});
-
-// Sorting functionality
-let currentSort = { column: '', direction: 'asc' };
-document.querySelectorAll('.sortable').forEach(header => {
-    header.addEventListener('click', function() {
-        const column = this.getAttribute('data-sort');
-        
-        // Update sort direction
-        if (currentSort.column === column) {
-            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentSort.column = column;
-            currentSort.direction = 'asc';
-        }
-
-        // Update sort icons
-        document.querySelectorAll('.sort-icon').forEach(icon => {
-            icon.textContent = '↕';
-        });
-        this.querySelector('.sort-icon').textContent = currentSort.direction === 'asc' ? '↓' : '↑';
-
-        // Sort the filtered students
-        filteredStudents.sort((a, b) => {
-            let valueA, valueB;
-            if (column === 'name') {
-                valueA = a.name;
-                valueB = b.name;
-            } else if (column === 'notebook') {
-                valueA = a.notebook;
-                valueB = b.notebook;
-            } else if (column === 'assignment') {
-                valueA = a.assignment;
-                valueB = b.assignment;
-            }
-
-            if (valueA < valueB) return currentSort.direction === 'asc' ? -1 : 1;
-            if (valueA > valueB) return currentSort.direction === 'asc' ? 1 : -1;
-            return 0;
-        });
-
-        currentPage = 1;
-        renderTable(currentPage);
-        renderPagination();
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Analytics update
-    document.getElementById('total-students').textContent = students.length;
-    document.getElementById('notebook-submitted').textContent = students.filter(s => s.notebook === 'Submitted').length;
-    document.getElementById('assignment-submitted').textContent = students.filter(s => s.assignment === 'Submitted').length;
-    document.getElementById('pending-assignments').textContent = students.filter(s => s.assignment === 'Pending' || s.assignment === 'Overdue').length;
-    renderTable(currentPage);
-    renderPagination();
-});
+})();
 </script>
 <script src="assets/js/vendor-all.min.js"></script>
 <script src="assets/js/plugins/bootstrap.min.js"></script>
