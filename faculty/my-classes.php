@@ -8,7 +8,19 @@ header('location:../index.php');
 else{
     // Get faculty information
     $faculty_email = $_SESSION['alogin'];
-    $faculty_id = $_SESSION['id'];
+    $faculty_id = isset($_SESSION['id']) ? intval($_SESSION['id']) : 0;
+    if ($faculty_id <= 0 && !empty($faculty_email)) {
+        if ($stmtTmp = mysqli_prepare($con, "SELECT erno FROM faculty WHERE email = ? LIMIT 1")) {
+            mysqli_stmt_bind_param($stmtTmp, 's', $faculty_email);
+            mysqli_stmt_execute($stmtTmp);
+            $resTmp = mysqli_stmt_get_result($stmtTmp);
+            if ($rowTmp = mysqli_fetch_assoc($resTmp)) {
+                $faculty_id = intval($rowTmp['erno']);
+                $_SESSION['id'] = $faculty_id; // cache for later usage
+            }
+            mysqli_stmt_close($stmtTmp);
+        }
+    }
     
     // Initialize classes array
     $classes = [];
@@ -380,6 +392,41 @@ else{
                         </div>
                     </div>
 
+                    <!-- Add Class Modal -->
+                    <div class="modal fade" id="addClassModal" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add New Class</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form id="add-class-form">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="class-name">Class Name</label>
+                                            <input type="text" class="form-control" id="class-name" name="name" placeholder="Enter class name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="class-description">Description</label>
+                                            <textarea class="form-control" id="class-description" name="description" placeholder="Optional description" rows="2"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="class-grnos">Student GRNOs</label>
+                                            <textarea class="form-control" id="class-grnos" name="grnos" placeholder="Enter GRNOs separated by comma, space, or new line" rows="4"></textarea>
+                                            <small class="form-text text-muted">Only existing students (by GRNO) will be enrolled. Others will be reported.</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="submit" id="submit-add-class" class="btn btn-primary" style="background:#1abc9c; border:none;">Create</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <!-- END: My Classes Section -->
@@ -505,25 +552,31 @@ function manageClass(classId) {
     window.location.href = 'manage-class.php?id=' + classId;
 }
 
-// Toggle graphs visibility
+// Toggle graphs visibility (guard if elements exist)
 let graphsVisible = false;
-document.getElementById('toggle-graphs-btn').addEventListener('click', function() {
-    graphsVisible = !graphsVisible;
-    document.getElementById('toggle-graphs-label').textContent = graphsVisible ? 'Show Stats' : 'Show Graphs';
-    const cards = document.querySelectorAll('.class-card');
-    cards.forEach(card => {
-        const stats = card.querySelector('.class-stats');
-        const graph = card.querySelector('.class-graph');
-        if (graphsVisible) {
-            stats.style.display = 'none';
-            graph.style.display = 'block';
-            renderClassGraph(card, graph);
-        } else {
-            stats.style.display = 'flex';
-            graph.style.display = 'none';
-        }
+var toggleGraphsBtn = document.getElementById('toggle-graphs-btn');
+if (toggleGraphsBtn) {
+    toggleGraphsBtn.addEventListener('click', function() {
+        graphsVisible = !graphsVisible;
+        var labelEl = document.getElementById('toggle-graphs-label');
+        if (labelEl) labelEl.textContent = graphsVisible ? 'Show Stats' : 'Show Graphs';
+        const cards = document.querySelectorAll('.class-card');
+        cards.forEach(card => {
+            const stats = card.querySelector('.class-stats');
+            const graph = card.querySelector('.class-graph');
+            if (graphsVisible) {
+                if (stats) stats.style.display = 'none';
+                if (graph) {
+                    graph.style.display = 'block';
+                    renderClassGraph(card, graph);
+                }
+            } else {
+                if (stats) stats.style.display = 'flex';
+                if (graph) graph.style.display = 'none';
+            }
+        });
     });
-});
+}
 
 // Simple graph rendering (replace with Chart.js or ApexCharts for real graphs)
 function renderClassGraph(card, graphDiv) {
@@ -572,7 +625,61 @@ function renderClassGraph(card, graphDiv) {
 document.addEventListener('DOMContentLoaded', function() {
     // Add any initialization code here
     console.log('My Classes page loaded');
+
+    // Add Class form submit handler
+    var addClassForm = document.getElementById('add-class-form');
+    if (addClassForm) {
+        addClassForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var submitBtn = document.getElementById('submit-add-class');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating...';
+            }
+            var formData = new FormData(addClassForm);
+            fetch('create-class.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response){ return response.json(); })
+            .then(function(data){
+                if (data.success) {
+                    var msg = 'Class created successfully.';
+                    if (data.added_count !== undefined) {
+                        msg += '\nStudents enrolled: ' + data.added_count;
+                    }
+                    if (data.not_found && data.not_found.length) {
+                        msg += '\nGRNOs not found: ' + data.not_found.join(', ');
+                    }
+                    if (data.already_enrolled && data.already_enrolled.length) {
+                        msg += '\nAlready enrolled: ' + data.already_enrolled.join(', ');
+                    }
+                    alert(msg);
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Unable to create class'));
+                }
+            })
+            .catch(function(err){
+                alert('Network or server error while creating class');
+                console.error(err);
+            })
+            .finally(function(){
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create';
+                }
+                $('#addClassModal').modal('hide');
+            });
+        });
+    }
 });
+
+// Open Add Class Modal
+function openAddClassModal(event) {
+    if (event) event.preventDefault();
+    $('#addClassModal').modal('show');
+}
 </script>
 <style>
 #class-searchbar:focus {
@@ -696,7 +803,7 @@ body.dark-mode #class-searchbar {
     }
 }
 </style>
-<a href="manage-class.php" class="fab-add-class" aria-label="Add New Class" title="Add New Class"><i class="feather icon-plus"></i></a>
+<a href="#" onclick="openAddClassModal(event)" class="fab-add-class" aria-label="Add New Class" title="Add New Class"><i class="feather icon-plus"></i></a>
 </body>
 
 </html>
