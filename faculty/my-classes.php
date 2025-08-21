@@ -80,52 +80,15 @@ else{
                                             <h4 style="color:#1abc9c; font-weight:600; margin-bottom: 8px;">My Classes</h4>
                                             <p style="color:#666; margin-bottom: 0;">Manage your classes, view student progress, and track assignments</p>
                                         </div>
-                                        <div>
-                                            <button class="btn btn-primary" style="background:#1abc9c; border:none; border-radius:12px; padding:10px 20px;">
-                                                <i class="feather icon-plus"></i> Add New Class
-                                            </button>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Class Overview Stats -->
-                    <div class="row" style="margin-bottom: 24px; gap: 0;">
-                        <div class="col-md-3 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#0097A7;">12</div>
-                                    <div class="stat-label">Total Classes</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#A41E22;">156</div>
-                                    <div class="stat-label">Total Students</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#F9B600;">89%</div>
-                                    <div class="stat-label">Average Attendance</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card glass-card">
-                                <div class="text-center">
-                                    <div class="stat-value" style="color:#102d4a;">92%</div>
-                                    <div class="stat-label">Submission Rate</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
+                   
 
                     <style>
                         body{
@@ -417,43 +380,6 @@ else{
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="row" style="margin-top: 24px;">
-                        <div class="col-12">
-                            <div class="card flat-card">
-                                <div class="card-body">
-                                    <h5 class="mb-3" style="color:#1abc9c; font-weight:600;">Quick Actions</h5>
-                                    <div class="row">
-                                        <div class="col-md-3 mb-3">
-                                            <button class="btn btn-outline-primary w-100" style="border-radius: 12px; padding: 15px;">
-                                                <i class="feather icon-file-text mr-2"></i>
-                                                Create Assignment
-                                            </button>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <button class="btn btn-outline-success w-100" style="border-radius: 12px; padding: 15px;">
-                                                <i class="feather icon-book mr-2"></i>
-                                                Check Notebooks
-                                            </button>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <button class="btn btn-outline-warning w-100" style="border-radius: 12px; padding: 15px;">
-                                                <i class="feather icon-users mr-2"></i>
-                                                Manage Students
-                                            </button>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <button class="btn btn-outline-info w-100" style="border-radius: 12px; padding: 15px;">
-                                                <i class="feather icon-bar-chart-2 mr-2"></i>
-                                                View Reports
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             <!-- END: My Classes Section -->
@@ -733,7 +659,44 @@ body.dark-mode #class-searchbar {
     color: #7f8c8d;
     margin-top: 4px;
 }
+
+/* Floating Add Class Button */
+.fab-add-class {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1abc9c;
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    z-index: 1050;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    text-decoration: none;
+}
+.fab-add-class:hover {
+    background: #17a589;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+}
+.fab-add-class i {
+    font-size: 22px;
+    line-height: 1;
+}
+@media (max-width: 576px) {
+    .fab-add-class {
+        right: 16px;
+        bottom: 16px;
+        width: 52px;
+        height: 52px;
+    }
+}
 </style>
+<a href="manage-class.php" class="fab-add-class" aria-label="Add New Class" title="Add New Class"><i class="feather icon-plus"></i></a>
 </body>
 
 </html>
