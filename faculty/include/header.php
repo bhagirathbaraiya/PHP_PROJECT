@@ -15,7 +15,23 @@
 
                 <div class="pro-head d-flex align-items-center" style="gap:10px; padding:16px 16px 12px 16px; border-bottom:1px solid #e0e7ef;">
                     <img src="https://marwadieducation.edu.in/MEFOnline/handler/getImage.ashx?Id=2355" class="img-radius user-profile-img" alt="User-Profile-Image" style="width:44px; height:44px; border-radius:50%; border:2px solid #fff; object-fit:cover;">
-                    <span class="user-name d-none d-lg-inline" style="color:#102d4a; font-weight:600; font-size:1.05rem;"> <?php echo "Faculty"; ?> </span>
+                    <span class="user-name d-none d-lg-inline" style="color:#102d4a; font-weight:600; font-size:1.05rem;"> <?php 
+                    $___dispName = 'Faculty';
+                    if (isset($_SESSION) && isset($_SESSION['id']) && isset($con)) {
+                        $___fid = intval($_SESSION['id']);
+                        if ($___stmt = mysqli_prepare($con, "SELECT fname, lname FROM faculty WHERE erno = ? LIMIT 1")) {
+                            mysqli_stmt_bind_param($___stmt, "i", $___fid);
+                            mysqli_stmt_execute($___stmt);
+                            $___res = mysqli_stmt_get_result($___stmt);
+                            if ($___row = mysqli_fetch_assoc($___res)) {
+                                $___name = trim(($___row['fname'] ?? '') . ' ' . ($___row['lname'] ?? ''));
+                                if ($___name !== '') { $___dispName = $___name; }
+                            }
+                            mysqli_stmt_close($___stmt);
+                        }
+                    }
+                    echo htmlspecialchars($___dispName); 
+                    ?> </span>
                     <a href="logout.php" class="dud-logout ml-auto" title="Logout" style="color:#A41E22;">
                         <i class="feather icon-log-out"></i>
                     </a>
