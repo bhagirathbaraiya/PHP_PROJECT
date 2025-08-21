@@ -20,6 +20,12 @@ $totals = [
     'notebooks_submitted' => 0,
 ];
 
+// Collections for detailed rendering
+$assignments = [];
+$notebooks = [];
+$assignmentSubmissionsMap = [];
+$notebookSubmissionsMap = [];
+
 if ($classId > 0 && $facultyId > 0) {
     // Verify ownership and fetch class with stats
     $query = "SELECT c.*, 
@@ -113,6 +119,68 @@ if ($classId > 0 && $facultyId > 0) {
             $stu['total_notebooks'] = $totalNotebooks;
         }
         unset($stu);
+
+        // Fetch all assignments for this class (for checkbox boxes)
+        $aListQuery = "SELECT id, name, due_date, created_at FROM assignments WHERE class_id = ? ORDER BY created_at ASC, id ASC";
+        if ($alist = mysqli_prepare($con, $aListQuery)) {
+            mysqli_stmt_bind_param($alist, 'i', $classId);
+            mysqli_stmt_execute($alist);
+            $ares = mysqli_stmt_get_result($alist);
+            $assignments = mysqli_fetch_all($ares, MYSQLI_ASSOC);
+            mysqli_stmt_close($alist);
+        }
+
+        // Fetch all notebooks for this class (for checkbox boxes)
+        $nListQuery = "SELECT id, created_at FROM notebook WHERE class_id = ? ORDER BY created_at ASC, id ASC";
+        if ($nlist = mysqli_prepare($con, $nListQuery)) {
+            mysqli_stmt_bind_param($nlist, 'i', $classId);
+            mysqli_stmt_execute($nlist);
+            $nres = mysqli_stmt_get_result($nlist);
+            $notebooks = mysqli_fetch_all($nres, MYSQLI_ASSOC);
+            mysqli_stmt_close($nlist);
+        }
+
+        // Build assignment submissions map: [$grno][$assignment_id] = ['submitted_at'=>..., 'graded'=>bool]
+        $asDetailQuery = "SELECT asub.assignment_id, asub.grno, asub.submitted_at, asub.grade, asub.status
+                           FROM assignments a
+                           INNER JOIN assignment_submissions asub ON asub.assignment_id = a.id
+                           WHERE a.class_id = ?";
+        if ($asdet = mysqli_prepare($con, $asDetailQuery)) {
+            mysqli_stmt_bind_param($asdet, 'i', $classId);
+            mysqli_stmt_execute($asdet);
+            $dres = mysqli_stmt_get_result($asdet);
+            while ($row = mysqli_fetch_assoc($dres)) {
+                $gr = $row['grno'];
+                $aid = $row['assignment_id'];
+                if (!isset($assignmentSubmissionsMap[$gr])) $assignmentSubmissionsMap[$gr] = [];
+                $assignmentSubmissionsMap[$gr][$aid] = [
+                    'submitted_at' => $row['submitted_at'],
+                    'graded' => (!empty($row['grade']) || (isset($row['status']) && strtolower($row['status']) === 'graded'))
+                ];
+            }
+            mysqli_stmt_close($asdet);
+        }
+
+        // Build notebook submissions map: [$grno][$notebook_id] = ['submitted_at'=>..., 'graded'=>bool]
+        $nbDetailQuery = "SELECT nsub.notebook_id, nsub.grno, nsub.submitted_at, nsub.grade, nsub.status
+                           FROM notebook n
+                           INNER JOIN notebook_submissions nsub ON nsub.notebook_id = n.id
+                           WHERE n.class_id = ?";
+        if ($nbdet = mysqli_prepare($con, $nbDetailQuery)) {
+            mysqli_stmt_bind_param($nbdet, 'i', $classId);
+            mysqli_stmt_execute($nbdet);
+            $nbres = mysqli_stmt_get_result($nbdet);
+            while ($row = mysqli_fetch_assoc($nbres)) {
+                $gr = $row['grno'];
+                $nid = $row['notebook_id'];
+                if (!isset($notebookSubmissionsMap[$gr])) $notebookSubmissionsMap[$gr] = [];
+                $notebookSubmissionsMap[$gr][$nid] = [
+                    'submitted_at' => $row['submitted_at'],
+                    'graded' => (!empty($row['grade']) || (isset($row['status']) && strtolower($row['status']) === 'graded'))
+                ];
+            }
+            mysqli_stmt_close($nbdet);
+        }
     }
 }
 ?>
@@ -155,6 +223,16 @@ if ($classId > 0 && $facultyId > 0) {
         .muted { color:#94a3b8; font-size:0.85rem; }
         .btn-soft { background:#0097A7; color:#fff; border:none; border-radius:10px; padding:8px 14px; }
         .btn-soft:hover { background:#0e7c86; }
+        /* Students table styles */
+        .students-table .avatar-mini { width:36px; height:36px; border-radius:50%; border:2px solid #e3e8ee; object-fit:cover; }
+        .box-grid { display:flex; flex-wrap:wrap; gap:6px; }
+        .ibox { width:18px; height:18px; border:1.5px solid #cbd5e1; border-radius:4px; background:#fff; position:relative; display:inline-block; cursor:pointer; }
+        .ibox.checked { background:#e8f5e9; border-color:#34a853; }
+        .ibox.checked::after { content:'\2713'; position:absolute; top:50%; left:50%; transform:translate(-50%,-52%); font-size:12px; color:#1b5e20; }
+        .ibox:hover { box-shadow:0 0 0 3px rgba(0,151,167,0.12); }
+        .ratio-badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#f1f5f9; color:#0f172a; font-weight:600; font-size:0.8rem; margin-right:6px; }
+        .progress.progress-sm { height:8px; border-radius:999px; background:#e9ecef; }
+        .progress.progress-sm .progress-bar { border-radius:999px; }
     </style>
 </head>
 <body class="">
@@ -202,39 +280,103 @@ if ($classId > 0 && $facultyId > 0) {
                             </div>
                         </div>
 
-                        <div class="row" id="studentsGrid">
                             <?php if (empty($students)): ?>
-                                <div class="col-12">
                                     <div class="text-center muted" style="padding:24px;">No students enrolled yet.</div>
-                                </div>
                             <?php else: ?>
-                                <?php foreach ($students as $idx => $s): ?>
-                                    <div class="col-lg-6 col-xl-4 mb-3 student-item" 
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered students-table" id="studentsTable">
+                                <thead style="background:#f8f9fa;">
+                                    <tr>
+                                        <th style="width:60px;">Sr No</th>
+                                        <th style="width:120px;">GRNO</th>
+                                        <th>Details</th>
+                                        <th style="min-width:220px;">Assignments</th>
+                                        <th style="min-width:220px;">Notebooks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php 
+                                    $aCount = count($assignments);
+                                    $nCount = count($notebooks);
+                                    foreach ($students as $idx => $s): 
+                                        $gr = $s['grno'];
+                                        $aTotal = (int)$aCount;
+                                        $nTotal = (int)$nCount;
+                                        $aGraded = 0;
+                                        foreach ($assignments as $aTmp) {
+                                            $aidTmp = $aTmp['id'];
+                                            if (isset($assignmentSubmissionsMap[$gr]) && isset($assignmentSubmissionsMap[$gr][$aidTmp]) && !empty($assignmentSubmissionsMap[$gr][$aidTmp]['graded'])) {
+                                                $aGraded++;
+                                            }
+                                        }
+                                        $nGraded = 0;
+                                        foreach ($notebooks as $nTmp) {
+                                            $nidTmp = $nTmp['id'];
+                                            if (isset($notebookSubmissionsMap[$gr]) && isset($notebookSubmissionsMap[$gr][$nidTmp]) && !empty($notebookSubmissionsMap[$gr][$nidTmp]['graded'])) {
+                                                $nGraded++;
+                                            }
+                                        }
+                                ?>
+                                    <tr class="student-row"
                                          data-name="<?php echo strtolower(htmlspecialchars($s['fname'].' '.$s['lname'])); ?>"
                                          data-email="<?php echo strtolower(htmlspecialchars($s['email'])); ?>"
                                          data-grno="<?php echo htmlspecialchars($s['grno']); ?>"
                                          data-erno="<?php echo htmlspecialchars($s['erno']); ?>">
-                                        <div class="student-card">
+                                        <td class="srno"></td>
+                                        <td><?php echo htmlspecialchars($s['grno']); ?></td>
+                                        <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="assets/images/user/user.png" class="avatar" alt="avatar">
-                                                <div style="margin-left:10px;">
-                                                    <div class="student-name"><?php echo htmlspecialchars($s['fname'].' '.$s['lname']); ?></div>
-                                                    <div class="student-meta">GR: <?php echo htmlspecialchars($s['grno']); ?> &nbsp; • &nbsp; ER: <?php echo htmlspecialchars($s['erno']); ?></div>
+                                                <img src="assets/images/user/user.png" class="avatar-mini mr-2" alt="avatar">
+                                                <div>
+                                                    <div class="student-name" style="margin-bottom:0;"><?php echo htmlspecialchars($s['fname'].' '.$s['lname']); ?></div>
+                                                    <div class="muted">ER: <?php echo htmlspecialchars($s['erno']); ?> &nbsp; • &nbsp; <?php echo htmlspecialchars($s['email']); ?></div>
                                                 </div>
                                             </div>
-                                            <div class="student-meta" style="margin-top:6px;">
-                                                <?php echo htmlspecialchars($s['email']); ?>
+                                        </td>
+                                        <td>
+                                            <div class="mb-1"><span class="ratio-badge"><?php echo $aGraded; ?>/<?php echo $aTotal; ?></span></div>
+                                            <div class="box-grid">
+                                                <?php foreach ($assignments as $a): 
+                                                    $aid = $a['id'];
+                                                    $assignedAt = isset($a['created_at']) ? $a['created_at'] : '';
+                                                    $has = isset($assignmentSubmissionsMap[$gr]) && isset($assignmentSubmissionsMap[$gr][$aid]);
+                                                    $graded = $has ? (bool)$assignmentSubmissionsMap[$gr][$aid]['graded'] : false;
+                                                    $submittedAt = $has ? $assignmentSubmissionsMap[$gr][$aid]['submitted_at'] : '';
+                                                    $tip = 'Assigned: '.($assignedAt ?: 'N/A');
+                                                    $tip .= ' | Submitted: '.($submittedAt ?: 'Not submitted');
+                                                ?>
+                                                    <span class="ibox <?php echo $graded ? 'checked' : ''; ?>" data-toggle="tooltip" title="<?php echo htmlspecialchars($tip); ?>" role="checkbox" aria-checked="<?php echo $graded ? 'true' : 'false'; ?>" data-type="assignment" data-id="<?php echo (int)$aid; ?>" data-grno="<?php echo (int)$gr; ?>"></span>
+                                                <?php endforeach; ?>
                                             </div>
-                                            <div style="margin-top:6px;">
-                                                <span class="chip">Assignments: <?php echo (int)$s['assignments_submitted']; ?>/<?php echo (int)$s['total_assignments']; ?></span>
-                                                <span class="chip">Notebooks: <?php echo (int)$s['notebooks_submitted']; ?>/<?php echo (int)$s['total_notebooks']; ?></span>
-                                                <span class="status-badge <?php echo ($s['status']==='active'?'status-active':'status-inactive'); ?>"><?php echo htmlspecialchars($s['status']); ?></span>
+                                        </td>
+                                        <td>
+                                            <div class="mb-1"><span class="ratio-badge"><?php echo $nGraded; ?>/<?php echo $nTotal; ?></span></div>
+                                            <div class="box-grid">
+                                                <?php foreach ($notebooks as $n): 
+                                                    $nid = $n['id'];
+                                                    $assignedAt = isset($n['created_at']) ? $n['created_at'] : '';
+                                                    $has = isset($notebookSubmissionsMap[$gr]) && isset($notebookSubmissionsMap[$gr][$nid]);
+                                                    $graded = $has ? (bool)$notebookSubmissionsMap[$gr][$nid]['graded'] : false;
+                                                    $submittedAt = $has ? $notebookSubmissionsMap[$gr][$nid]['submitted_at'] : '';
+                                                    $tip = 'Assigned: '.($assignedAt ?: 'N/A');
+                                                    $tip .= ' | Submitted: '.($submittedAt ?: 'Not submitted');
+                                                ?>
+                                                    <span class="ibox <?php echo $graded ? 'checked' : ''; ?>" data-toggle="tooltip" title="<?php echo htmlspecialchars($tip); ?>" role="checkbox" aria-checked="<?php echo $graded ? 'true' : 'false'; ?>" data-type="notebook" data-id="<?php echo (int)$nid; ?>" data-grno="<?php echo (int)$gr; ?>"></span>
+                                                <?php endforeach; ?>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div class="muted" id="studentsTableInfo"></div>
+                            <nav>
+                                <ul class="pagination pagination-sm mb-0" id="studentsPagination"></ul>
+                            </nav>
+                        </div>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -246,16 +388,101 @@ if ($classId > 0 && $facultyId > 0) {
 <script>
 (function(){
     var searchInput = document.getElementById('studentSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function(e){
-            var q = (e.target.value || '').toLowerCase();
-            var items = document.querySelectorAll('.student-item');
-            Array.prototype.forEach.call(items, function(el){
-                var hay = (el.getAttribute('data-name') + ' ' + el.getAttribute('data-email') + ' ' + el.getAttribute('data-grno') + ' ' + el.getAttribute('data-erno')).toLowerCase();
-                el.style.display = hay.indexOf(q) !== -1 ? 'block' : 'none';
-            });
+    var table = document.getElementById('studentsTable');
+    var tbody = table ? table.querySelector('tbody') : null;
+    var pagination = document.getElementById('studentsPagination');
+    var info = document.getElementById('studentsTableInfo');
+    var rows = tbody ? Array.prototype.slice.call(tbody.querySelectorAll('tr.student-row')) : [];
+    var pageSize = 10;
+    var currentPage = 1;
+
+    function filterRows() {
+        var q = (searchInput && searchInput.value ? searchInput.value : '').toLowerCase();
+        rows.forEach(function(r){
+            var hay = (r.getAttribute('data-name') + ' ' + r.getAttribute('data-email') + ' ' + r.getAttribute('data-grno') + ' ' + r.getAttribute('data-erno')).toLowerCase();
+            r.style.display = hay.indexOf(q) !== -1 ? '' : 'none';
+        });
+        currentPage = 1;
+        paginate();
+    }
+
+    function paginate() {
+        var visible = rows.filter(function(r){ return r.style.display !== 'none'; });
+        var total = visible.length;
+        var pages = Math.max(1, Math.ceil(total / pageSize));
+        if (currentPage > pages) currentPage = pages;
+        var start = (currentPage - 1) * pageSize;
+        var end = start + pageSize;
+
+        // Hide all, then show current page
+        visible.forEach(function(r, i){
+            r.style.display = (i >= start && i < end) ? '' : 'none';
+        });
+
+        // Update serial numbers
+        visible.forEach(function(r, i){
+            if (i >= start && i < end) {
+                var srCell = r.querySelector('td.srno');
+                if (srCell) srCell.textContent = (i + 1);
+            }
+        });
+
+        // Render pagination controls
+        if (pagination) {
+            pagination.innerHTML = '';
+            function addPage(label, page, disabled, active) {
+                var li = document.createElement('li');
+                li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = label;
+                a.addEventListener('click', function(ev){ ev.preventDefault(); if (!disabled) { currentPage = page; paginate(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+            addPage('«', 1, currentPage === 1, false);
+            addPage('‹', Math.max(1, currentPage - 1), currentPage === 1, false);
+            for (var p = 1; p <= pages; p++) addPage(String(p), p, false, p === currentPage);
+            addPage('›', Math.min(pages, currentPage + 1), currentPage === pages, false);
+            addPage('»', pages, currentPage === pages, false);
+        }
+
+        if (info) {
+            var showingStart = total === 0 ? 0 : start + 1;
+            var showingEnd = Math.min(total, end);
+            info.textContent = 'Showing ' + showingStart + '–' + showingEnd + ' of ' + total + ' students';
+        }
+
+        // Init tooltips for visible page
+        if (window.jQuery && typeof jQuery.fn.tooltip === 'function') {
+            jQuery('[data-toggle="tooltip"]').tooltip({ container: 'body' });
+        }
+
+        // Attach checkbox box click handlers (idempotent binding)
+        var boxes = document.querySelectorAll('.ibox');
+        boxes.forEach(function(box){
+            box.onclick = function(ev){
+                var isChecked = box.classList.contains('checked');
+                if (isChecked) {
+                    var ok = confirm('Uncheck? This will mark it as not graded.');
+                    if (!ok) return;
+                    box.classList.remove('checked');
+                    box.setAttribute('aria-checked', 'false');
+                } else {
+                    box.classList.add('checked');
+                    box.setAttribute('aria-checked', 'true');
+                }
+            };
+            box.setAttribute('tabindex', '0');
+            box.onkeydown = function(e){
+                if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); box.click(); }
+            };
         });
     }
+
+    if (searchInput) searchInput.addEventListener('input', filterRows);
+    if (rows.length) paginate();
 })();
 </script>
 <script src="assets/js/vendor-all.min.js"></script>
