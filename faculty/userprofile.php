@@ -6,11 +6,55 @@ if(strlen($_SESSION['id'])==0)
 header('location:../index.php');
 }
 else{
+    // Fetch student data from database
+    $student_id = $_SESSION['id']; // Assuming session stores grno
+    $query = mysqli_query($con, "SELECT * FROM faculty WHERE erno='$student_id'");
+    $student_data = mysqli_fetch_array($query);
+    
+    if(!$student_data) {
+        // If student not found, redirect to login
+        header('location:../index.php');
+        exit();
+    }
+    
+    // Handle password update
+    $message = '';
+    $error = '';
+    
+    if(isset($_POST['update_password'])) {
+        $old_password = $_POST['old_password'];
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
+        
+        // Verify old password
+        if(password_verify($old_password, $student_data['password'])) {
+            if($new_password === $confirm_password) {
+                if(strlen($new_password) >= 6) {
+                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    $update_query = mysqli_query($con, "UPDATE students SET password='$hashed_password', updated_at=CURRENT_TIMESTAMP WHERE grno='$student_id'");
+                    
+                    if($update_query) {
+                        $message = 'Password updated successfully!';
+                        // Log the action
+                        mysqli_query($con, "INSERT INTO common_log (user_id, user_role, action, description, status) VALUES ('$student_id', 'student', 'update', 'Password updated', 'success')");
+                    } else {
+                        $error = 'Failed to update password. Please try again.';
+                    }
+                } else {
+                    $error = 'New password must be at least 6 characters long.';
+                }
+            } else {
+                $error = 'New passwords do not match.';
+            }
+        } else {
+            $error = 'Current password is incorrect.';
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Faculty Profile</title>
+    <title>CMS || Student Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/css/user-responsive.css">
     <link rel="stylesheet" href="../admin/assets/css/style.css">
@@ -314,36 +358,38 @@ else{
             
             <div class="profile-glass-info">
             <div class="profile-glass-image-wrap">
-                <img src="https://student.marwadiuniversity.ac.in:553/handler/getImage.ashx?SID=123766" alt="Student Photo" class="profile-glass-image">
+                <img src="https://marwadieducation.edu.in/MEFOnline/handler/getImage.ashx?Id=<?php echo strtoupper(($student_data['erno'])); ?>" alt="Student Photo" class="profile-glass-image">
             </div>
-                <div class="profile-glass-name">BHAGIRATH BARAIYA</div>
-                <div class="profile-glass-id">Student ID: 123766 , 92320527005</div>
+                <div class="profile-glass-name"><?php echo htmlspecialchars($student_data['fname'] . ' ' . $student_data['lname']); ?></div>
+                <div class="profile-glass-id">Student ID: <?php echo htmlspecialchars($student_data['erno']); ?> , <?php echo htmlspecialchars($student_data['erno']); ?></div>
                 <div class="profile-glass-section">
                     <div class="profile-glass-section-title">Personal Information</div>
                     <div class="profile-glass-fields personal-info-fields">
                         <div class="profile-glass-field">
                             <span class="profile-glass-label">Full Name</span>
-                            <span class="profile-glass-value">BHAGIRATH BARAIYA</span>
+                            <span class="profile-glass-value"><?php echo htmlspecialchars($student_data['fname'] . ' ' . $student_data['lname']); ?></span>
                         </div>
                         <div class="profile-glass-field">
                             <span class="profile-glass-label">Email</span>
-                            <span class="profile-glass-value">bhagirathbhai.baraiya123766@marwadiuniversity.ac.in</span>
+                            <span class="profile-glass-value"><?php echo htmlspecialchars($student_data['email']); ?></span>
                         </div>
                         <div class="profile-glass-field">
                             <span class="profile-glass-label">Mobile Number</span>
-                            <span class="profile-glass-value">+91 9876543210</span>
+                            <span class="profile-glass-value"><?php echo $student_data['mobile'] ? '+91 ' . htmlspecialchars($student_data['mobile']) : 'Not provided'; ?></span>
                         </div>
-                        <div class="profile-glass-field telegram-field">
+                        <!-- <div class="profile-glass-field telegram-field">
                             <span class="profile-glass-label">Telegram ID</span>
-                            <span class="profile-glass-value">@ydf_bot</span>
+                            <span class="profile-glass-value"><?php echo $student_data['telegram'] ? '@' . htmlspecialchars($student_data['telegram']) : 'Not registered'; ?></span>
+                            <?php if($student_data['telegram']) { ?>
                             <div class="profile-glass-qr-wrap">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://t.me/ydf_bot" alt="Telegram QR" class="profile-glass-qr">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://t.me/<?php echo htmlspecialchars($student_data['telegram']); ?>" alt="Telegram QR" class="profile-glass-qr">
                                 <div class="profile-glass-qr-note">Scan to register/update Telegram</div>
                             </div>
-                        </div>
+                            <?php } ?>
+                        </div> -->
                     </div>
                 </div>
-                <div class="profile-glass-section">
+                <!-- <div class="profile-glass-section">
                     <div class="profile-glass-section-title">Educational Details</div>
                     <div class="profile-glass-fields">
                         <div class="profile-glass-field">
@@ -363,33 +409,43 @@ else{
                             <span class="profile-glass-value">A</span>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="profile-glass-section">
                     <div class="profile-glass-section-title">Update Credentials</div>
-                    <form class="update-credentials-form" autocomplete="off">
+                    <?php if($message) { ?>
+                        <div style="background: rgba(0, 151, 167, 0.1); border: 1px solid #0097A7; color: #0097A7; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                            <?php echo htmlspecialchars($message); ?>
+                        </div>
+                    <?php } ?>
+                    <?php if($error) { ?>
+                        <div style="background: rgba(164, 30, 34, 0.1); border: 1px solid #A41E22; color: #A41E22; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                            <?php echo htmlspecialchars($error); ?>
+                        </div>
+                    <?php } ?>
+                    <form class="update-credentials-form" method="POST" autocomplete="off">
                         <div class="update-credentials-field">
                             <label class="profile-glass-label" for="old-password">Old Password</label>
                             <div class="password-input-wrap">
-                                <input type="password" id="old-password" class="form-control-input" placeholder="Enter Old Password" autocomplete="current-password">
+                                <input type="password" id="old-password" name="old_password" class="form-control-input" placeholder="Enter Old Password" autocomplete="current-password" required>
                                 <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
                             </div>
                         </div>
                         <div class="update-credentials-field">
                             <label class="profile-glass-label" for="new-password">New Password</label>
                             <div class="password-input-wrap">
-                                <input type="password" id="new-password" class="form-control-input" placeholder="Enter New Password" autocomplete="new-password">
+                                <input type="password" id="new-password" name="new_password" class="form-control-input" placeholder="Enter New Password" autocomplete="new-password" required>
                                 <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
                             </div>
                         </div>
                         <div class="update-credentials-field">
                             <label class="profile-glass-label" for="confirm-password">Confirm New Password</label>
                             <div class="password-input-wrap">
-                                <input type="password" id="confirm-password" class="form-control-input" placeholder="Confirm New Password" autocomplete="new-password">
+                                <input type="password" id="confirm-password" name="confirm_password" class="form-control-input" placeholder="Confirm New Password" autocomplete="new-password" required>
                                 <button type="button" class="toggle-password" tabindex="-1" aria-label="Show/Hide Password"><i class="fa-solid fa-eye eye-icon"></i></button>
                             </div>
                         </div>
                         <div class="update-credentials-field">
-                            <button class="btn btn-primary update-btn" type="submit">Update</button>
+                            <button class="btn btn-primary update-btn" type="submit" name="update_password">Update</button>
                         </div>
                     </form>
                 </div>
@@ -415,6 +471,26 @@ else{
                 icon.classList.add('fa-eye');
             }
         });
+    });
+    
+    // Password validation
+    document.querySelector('.update-credentials-form').addEventListener('submit', function(e) {
+        var newPassword = document.getElementById('new-password').value;
+        var confirmPassword = document.getElementById('confirm-password').value;
+        
+        if (newPassword.length < 6) {
+            e.preventDefault();
+            alert('New password must be at least 6 characters long.');
+            return false;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            e.preventDefault();
+            alert('New passwords do not match.');
+            return false;
+        }
+        
+        return true;
     });
     </script>
 </body>
